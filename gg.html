@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>xiaozhong1906 博客</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
+    
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@material/web@1.0.0/all.js"></script>
+
+    <style>
+        /* 1. 全局样式和字体设置 */
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: #f4f7f9; /* MD3 风格的浅灰色背景 */
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* 2. MD3 风格的主标题 */
+        h1 {
+            color: #1a73e8; /* 蓝色作为主色调 */
+            font-weight: 700;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        /* 3. 卡片容器布局 */
+        .card-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            max-width: 1200px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        /* 4. 卡片样式 (使用 md-card 配合自定义样式) */
+        .custom-card {
+            width: 300px;
+            cursor: pointer;
+            border-radius: 12px; /* MD3 默认圆角 */
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 轻微阴影 */
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .custom-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* 5. 蓝白渐变标题区域 */
+        .card-header {
+            /* 蓝白渐变色 */
+            background: linear-gradient(135deg, #4285f4, #ffffff); 
+            padding: 15px;
+            color: #1a2b4b; /* 深色文字以保证可读性 */
+            font-weight: 700;
+            font-size: 1.2em;
+            letter-spacing: 0.5px;
+            text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5); /* 稍微增加文字立体感 */
+        }
+        
+        /* 6. 文章大纲/内容区域 */
+        .card-content {
+            padding: 15px;
+            background-color: white;
+            color: #3c4043;
+        }
+
+        .card-content p {
+            font-size: 0.9em;
+            line-height: 1.6;
+            margin-top: 5px;
+            margin-bottom: 0;
+            /* 字体颜色蓝白渐变（只对标题做了，内文保持高可读性） */
+        }
+
+        /* 7. 跳转链接样式 */
+        .card-link {
+            text-decoration: none; /* 移除下划线 */
+            color: inherit; /* 继承父元素颜色 */
+            display: block; /* 使整个卡片可点击 */
+        }
+    </style>
+</head>
+<body>
+
+    <h1>博客</h1>
+    
+
+    <div class="card-container">
+        
+        <md-card class="custom-card">
+            <a href="article1.html" class="card-link">
+                <div class="card-header">
+                    文章标题一：设计新趋势
+                </div>
+                <div class="card-content">
+                    <p>摘要：Material Design 3 的核心理念，动态色彩与个性化表达，为用户界面带来全新体验和更强适应性。</p>
+                </div>
+            </a>
+        </md-card>
+
+        <md-card class="custom-card">
+            <a href="article2.html" class="card-link">
+                <div class="card-header">
+                    深入浅出 Web Components
+                </div>
+                <div class="card-content">
+                    <p>摘要：如何使用原生 Web Components 构建可重用且封装良好的 UI 元素，这是现代前端开发的重要基石。</p>
+                </div>
+            </a>
+        </md-card>
+
+        <md-card class="custom-card">
+            <a href="article3.html" class="card-link">
+                <div class="card-header">
+                    Google Fonts 中文字体推荐
+                </div>
+                <div class="card-content">
+                    <p>摘要：盘点 Google Fonts 中适合简体中文网站的高质量字体，重点分析 Noto Sans SC 的优势和应用场景。</p>
+                </div>
+            </a>
+        </md-card>
+
+        <md-card class="custom-card">
+            <a href="article4.html" class="card-link">
+                <div class="card-header">
+                    前端性能优化实践
+                </div>
+                <div class="card-content">
+                    <p>摘要：从资源加载到渲染优化，提升网页加载速度的十个实用技巧，确保用户获得流畅的浏览体验。</p>
+                </div>
+            </a>
+        </md-card>
+
+    </div>
+
+</body>
+</html>
