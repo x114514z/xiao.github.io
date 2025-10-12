@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML/CSS 预览器</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* CSS 变量定义 - 模拟 Google MD3 颜色 */
+        :root {
+            --md-primary: #007bff; /* 蓝色主色调 */
+            --md-surface: #ffffff; /* 白色背景 */
+            --md-on-surface: #1c1b1f; /* 深色文本 */
+            --md-gradient-start: #a3daff; /* 浅蓝 - 渐变开始 */
+            --md-gradient-end: #007bff; /* 亮蓝 - 渐变结束 */
+            --md-secondary-hover: #0056b3; /* 按钮悬停颜色 */
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: var(--md-surface);
+            color: var(--md-on-surface);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 15px;
+            /* 蓝白渐变背景 */
+            background: linear-gradient(90deg, var(--md-gradient-start) 0%, var(--md-gradient-end) 100%);
+            color: white; 
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            margin: 0;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap; 
+        }
+
+        .editor-section {
+            flex: 1;
+            min-width: 300px; 
+            display: flex; /* 让输入框和按钮垂直排列 */
+            flex-direction: column;
+        }
+
+        .preview-section {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        /* 解决问题 2: 输入框无法下滑 */
+        textarea {
+            width: 100%;
+            height: 300px;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-family: monospace; 
+            font-size: 14px;
+            resize: vertical;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            overflow: auto; /* **关键修复点：确保内容溢出时可以滚动** */
+            margin-bottom: 10px; /* 为按钮留出空间 */
+        }
+
+        textarea:focus {
+            border-color: var(--md-primary);
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+            outline: none;
+        }
+
+        /* 解决问题 1: 添加运行按钮的样式 */
+        #runButton {
+            background-color: var(--md-primary);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+            align-self: flex-start; /* 让按钮靠左 */
+            box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        #runButton:hover {
+            background-color: var(--md-secondary-hover);
+            transform: translateY(-1px);
+        }
+        
+        #runButton:active {
+            transform: translateY(1px);
+        }
+
+
+        .preview-box {
+            border: 2px dashed #ccc;
+            min-height: 300px;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #f7f7f7;
+            overflow: auto; 
+        }
+
+        h2 {
+            color: var(--md-primary);
+            border-bottom: 2px solid var(--md-primary);
+            padding-bottom: 5px;
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>在线 HTML/CSS 实时预览器</h1>
+        <p>输入您的 HTML/CSS 代码，点击“运行代码”按钮进行预览</p>
+    </header>
+
+    <div class="container">
+        <div class="editor-section">
+            <h2>输入代码</h2>
+            <textarea id="codeInput" placeholder="在此输入 HTML/CSS 代码..."></textarea>
+            
+            <button id="runButton">运行代码</button>
+        </div>
+
+        <div class="preview-section">
+            <h2>预览结果</h2>
+            <div id="previewOutput" class="preview-box">
+                <p>点击“运行代码”按钮查看您的代码运行结果。</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const codeInput = document.getElementById('codeInput');
+        const previewOutput = document.getElementById('previewOutput');
+        const runButton = document.getElementById('runButton'); // 获取新的按钮元素
+
+        // 核心预览函数
+        function updatePreview() {
+            // 将输入框的 HTML/CSS 注入到预览区域
+            previewOutput.innerHTML = codeInput.value;
+        }
+
+        // 解决问题 1: 监听按钮的点击事件，而不是每次输入
+        runButton.addEventListener('click', updatePreview);
+
+        // 初始化时设置一个示例代码
+        codeInput.value = `
+<h3 style="color: var(--md-primary);">这是一个示例标题</h3>
+<p>现在只有点击“运行代码”按钮后才会更新哦！🎉</p>
+<button style="
+    background: var(--md-gradient-end); 
+    color: white; 
+    border: none; 
+    padding: 10px 20px; 
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: inherit;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+">
+    MD3 风格按钮
+</button>
+        `.trim(); 
+
+        // 页面加载完成后，**不再自动运行**，等待用户点击。
+    </script>
+
+</body>
+</html>
