@@ -1,23 +1,76 @@
+/* 默认光标 */
 body {
-  cursor: url('a.cur'), auto;
+  cursor: url('pointer.cur'), auto;
 }
 
-/* 输入光标 - 用于文本输入区域 */
-input, textarea, select, [contenteditable="true"] {
-  cursor: url('b.cur'), text;
+/* 链接光标 */
+a, [role="button"], button {
+  cursor: url('link.cur'), pointer;
 }
 
-/* 链接和按钮保持默认光标（使用normal.cur） */
-a, button {
-  cursor: url('a.cur'), pointer;
+/* 文本输入光标 */
+input, textarea, select, [contenteditable] {
+  cursor: url('beam.cur'), text;
 }
 
-/* 禁用状态 */
-input:disabled, button:disabled {
-  cursor: url('a.cur'), not-allowed;
+/* 帮助光标 */
+.help, [title]:hover, [data-tooltip]:hover {
+  cursor: url('help.cur'), help;
 }
 
-/* 等待/加载状态 */
-.busy, .loading {
-  cursor: url('a.cur'), wait;
+/* 移动光标 */
+.draggable, [draggable="true"] {
+  cursor: url('move.cur'), move;
+}
+
+/* 精确选择光标 */
+.precision, .target {
+  cursor: url('precision.cur'), crosshair;
+}
+
+/* 不可用光标 */
+.disabled, :disabled {
+  cursor: url('unavailable.cur'), not-allowed;
+}
+
+/* 等待/加载光标 */
+.loading, .busy, .progress {
+  cursor: url('person.cur'), wait;
+}
+
+/* 调整大小光标 */
+
+/* 水平调整 */
+.resize-horizontal, .resize-x {
+  cursor: url('horz.cur'), ew-resize;
+}
+
+/* 垂直调整 */
+.resize-vertical, .resize-y {
+  cursor: url('vert.cur'), ns-resize;
+}
+
+/* 对角线调整1 (左上-右下) */
+.resize-diagonal1, .resize-nwse {
+  cursor: url('dgn1.cur'), nwse-resize;
+}
+
+/* 对角线调整2 (右上-左下) */
+.resize-diagonal2, .resize-nesw {
+  cursor: url('dgn2.cur'), nesw-resize;
+}
+
+/* 手写光标 */
+.handwriting, .draw {
+  cursor: url('handwriting.cur'), copy;
+}
+
+/* 交替/备用光标 */
+.alternate, .context-menu {
+  cursor: url('alternate.cur'), context-menu;
+}
+
+/* 图钉光标 */
+.pin, .marker, .location {
+  cursor: url('pin.cur'), default;
 }
