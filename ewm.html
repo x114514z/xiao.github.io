@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MD3 二维码生成器</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" rel="stylesheet" />
+
+    <style>
+        /* 颜色变量 - 沿用您的蓝色系配色方案 */
+        :root {
+            /* 主色: 3288FE */
+            --md-color-primary: #3288FE;
+            /* 背景色: B1D1FB */
+            --md-color-background: #B1D1FB;
+            /* 表面色 - 卡片内部背景 */
+            --md-color-surface: #FFFFFF;
+            /* 强调色 / 按钮 hover 色: 419BF2 */
+            --md-color-action-dark: #419BF2;
+            /* 轮廓/边框色: 7C84D9 */
+            --md-color-outline: #7C84D9;
+            /* 标题文本色: 4295E1 */
+            --md-color-on-surface-high: #4295E1;
+            /* 正文文本色 */
+            --md-color-on-surface-medium: #1f1f1f;
+            /* 辅助色 - 成功下载 */
+            --md-color-success: #1e8e3e;
+        }
+
+        body { 
+            font-family: 'Noto Sans SC', sans-serif, sans-serif;
+            background-color: var(--md-color-background); 
+            margin: 0; 
+            padding: 40px 20px; 
+            color: var(--md-color-on-surface-medium);
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        
+        /* MD3 风格容器 (卡片) */
+        .card-container {
+            width: 100%;
+            max-width: 650px; 
+            background: var(--md-color-surface);
+            padding: 35px;
+            border-radius: 24px; /* 更圆润的MD3大圆角 */
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08), 0 2px 5px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--md-color-outline);
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        h1 {
+            color: var(--md-color-primary);
+            font-weight: 700;
+            font-size: 2em;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        h1 .material-symbols-rounded {
+            margin-right: 10px;
+            font-size: 32px;
+        }
+        
+        /* 输入组样式 */
+        .input-group {
+            margin: 25px 0;
+            text-align: left;
+        }
+        
+        label { 
+            display: block;
+            margin-bottom: 8px; 
+            font-weight: 500;
+            color: var(--md-color-on-surface-medium);
+            font-size: 1.1em;
+        }
+        
+        input[type="text"] { 
+            width: 100%;
+            padding: 12px; 
+            border: 1px solid var(--md-color-outline); 
+            border-radius: 8px; 
+            font-size: 16px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            box-sizing: border-box;
+            background-color: var(--md-color-background); 
+            font-family: 'Noto Sans SC', sans-serif;
+        }
+        
+        input[type="text"]:focus { 
+            outline: none;
+            border-color: var(--md-color-primary); 
+            box-shadow: 0 0 0 1px var(--md-color-primary); 
+            background-color: var(--md-color-surface);
+        }
+        
+        /* 按钮组 */
+        .button-group {
+            display: flex;
+            gap: 15px; /* 按钮间距 */
+            margin-bottom: 30px;
+        }
+
+        button { 
+            flex-grow: 1;
+            background-color: var(--md-color-primary);
+            color: white; 
+            padding: 12px 0; /* 垂直居中，宽度由 flex-grow 决定 */
+            border: none; 
+            border-radius: 10px; 
+            cursor: pointer; 
+            font-size: 16px; 
+            font-weight: 500;
+            transition: background-color 0.2s, box-shadow 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        button:hover:not(:disabled) { 
+            background-color: var(--md-color-action-dark);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* 下载按钮使用不同的颜色强调 */
+        #download-btn {
+            background-color: var(--md-color-success);
+        }
+        #download-btn:hover:not(:disabled) {
+            background-color: #1a6d36;
+        }
+        
+        /* 禁用状态样式 */
+        button:disabled {
+            background-color: var(--md-color-outline);
+            cursor: not-allowed;
+            opacity: 0.6;
+            box-shadow: none;
+        }
+
+        button .material-symbols-rounded {
+            margin-right: 8px;
+            font-size: 22px;
+        }
+
+        /* 二维码显示区域 */
+        .qrcode-output {
+            margin-top: 30px;
+            padding-top: 20px;
+        }
+
+        #qr-code {
+            margin: 25px auto;
+            border: 5px solid var(--md-color-surface); 
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            display: inline-block;
+            overflow: hidden; /* 隐藏可能溢出的内容，确保圆角生效 */
+        }
+        
+        /* 使用说明样式 */
+        .instructions {
+            background-color: #e8f5ff; /* 浅蓝底色 */
+            border-left: 5px solid var(--md-color-primary);
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+            text-align: left;
+        }
+
+        .instructions h3 {
+            color: var(--md-color-on-surface-high);
+            margin-top: 0;
+            font-weight: 700;
+        }
+        
+        .instructions p {
+            margin: 8px 0;
+            font-size: 0.95em;
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 500px) {
+            .button-group {
+                flex-direction: column; /* 小屏幕上按钮堆叠 */
+            }
+            .card-container {
+                padding: 20px;
+                border-radius: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="card-container">
+        
+        <h1>
+            <span class="material-symbols-rounded">QR</span>
+            二维码生成器
+        </h1>
+
+        <div class="input-group">
+            <label for="qr-input">输入 URL 或文本：</label>
+            <input type="text" id="qr-input" placeholder="例如：https://www.google.com 或 任意文本">
+        </div>
+        
+        <div class="button-group">
+            <button onclick="generateQRCode()">
+                <span class="material-symbols-rounded">generate</span>
+                生成二维码
+            </button>
+            <button onclick="downloadQRCode()" id="download-btn" disabled>
+                <span class="material-symbols-rounded">download</span>
+                下载二维码
+            </button>
+        </div>
+                
+        <div class="qrcode-output">
+            <div id="qr-code"></div>
+        </div>
+        
+        <div class="instructions">
+            <h3>使用说明</h3>
+            <p>1. 在输入框中输入任何文本或链接。</p>
+            <p>2. 点击 "<span class="material-symbols-rounded" style="font-size:16px;">generate</span> 生成二维码" 按钮。</p>
+            <p>3. 成功生成后，点击 "<span class="material-symbols-rounded" style="font-size:16px;">download</span> 下载二维码" 按钮保存图片。</p>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
+    <script>
+        let currentQRCode = null;
+        const qrContainer = document.getElementById('qr-code');
+        const inputField = document.getElementById('qr-input');
+        const downloadBtn = document.getElementById('download-btn');
+
+        function generateQRCode() {
+            const input = inputField.value.trim();
+                        
+            if (!input) {
+                alert('请输入 URL 或文本！');
+                return;
+            }
+                        
+            // 清空之前生成的二维码
+            qrContainer.innerHTML = '';
+                        
+            // 生成二维码
+            currentQRCode = new QRCode(qrContainer, {
+                text: input,
+                width: 250, /* 适当增加尺寸以适应MD3风格 */
+                height: 250,
+                colorDark: "#1f1f1f",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H 
+            });
+                        
+            // 启用下载按钮
+            downloadBtn.disabled = false;
+        }
+                
+        function downloadQRCode() {
+            // qrcode.js 生成的是 Canvas 元素
+            const canvas = qrContainer.querySelector('canvas');
+            if (!canvas) {
+                alert('请先生成二维码！');
+                return;
+            }
+                        
+            // 创建下载链接
+            const link = document.createElement('a');
+            link.download = `qrcode-${Date.now()}.png`;
+            // 使用 toDataURL 生成 base64 图片数据
+            link.href = canvas.toDataURL('image/png');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+                
+        // 键盘支持：按下回车键生成二维码
+        inputField.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                generateQRCode();
+            }
+        });
+        
+        // 页面加载时自动生成一个默认提示二维码
+        document.addEventListener('DOMContentLoaded', () => {
+            inputField.value = '欢迎使用 MD3 二维码生成器！';
+            generateQRCode();
+        });
+    </script>
+</body>
+</html>
