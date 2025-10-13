@@ -1,0 +1,23 @@
+body {
+  cursor: url('a.cur'), auto;
+}
+
+/* 输入光标 - 用于文本输入区域 */
+input, textarea, select, [contenteditable="true"] {
+  cursor: url('b.cur'), text;
+}
+
+/* 链接和按钮保持默认光标（使用normal.cur） */
+a, button {
+  cursor: url('a.cur'), pointer;
+}
+
+/* 禁用状态 */
+input:disabled, button:disabled {
+  cursor: url('a.cur'), not-allowed;
+}
+
+/* 等待/加载状态 */
+.busy, .loading {
+  cursor: url('a.cur'), wait;
+}
