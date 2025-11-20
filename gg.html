@@ -3,419 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>xiaozhong1906 博客</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <title>xiaozhong1906 博客工具箱</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="sb.css">
     
-    <!-- Google Material Design 组件库 -->
-    <script type="module" src="all.js"></script>
-    <!-- 自定义搜索功能 -->
-    <script type="module" src="custom-search.js"></script>
-
+    <!-- 关键：补上这个才能让 md-card 有样子 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/material-web/1.4.0/material-web.min.css">
+    <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/material-web/1.4.0/material-web.min.js"></script>
+    
     <style>
-        /* 1. 全局样式和字体设置 */
-        body {
-            font-family: 'Noto Sans SC', sans-serif;
-            background-color: #f4f7f9; /* MD3 风格的浅灰色背景 */
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        /* 2. MD3 风格的主标题 */
-        h1 {
-            color: #1a73e8; /* 蓝色作为主色调 */
-            font-weight: 700;
-            margin-bottom: 40px;
-            text-align: center;
-        }
-
-        /* 3. 搜索导航区域 */
-        .navigation {
-            margin-bottom: 30px;
-            width: 100%;
-            max-width: 1200px;
-            display: flex;
-            justify-content: center;
-        }
-
-        .search-box {
-            position: relative;
-            width: 400px;
-            max-width: 90%;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 12px 40px 12px 16px;
-            border: 2px solid #e0e6ed;
-            border-radius: 25px;
-            font-size: 16px;
-            background-color: white;
-            transition: border-color 0.3s, box-shadow 0.3s;
-            font-family: 'Noto Sans SC', sans-serif;
-        }
-
-        .search-input:focus {
-            outline: none;
-            border-color: #4285f4;
-            box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.1);
-        }
-
-        .search-icon {
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #666;
-            pointer-events: none;
-            font-size: 16px;
-        }
-
-        .search-result {
-            margin-top: 10px;
-            text-align: center;
-            color: #666;
-            font-size: 0.9em;
-            font-weight: 500;
-        }
-
-        /* 4. 卡片容器布局 */
-        .card-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            max-width: 1200px;
-            width: 100%;
-            justify-content: center;
-        }
-
-        /* 5. 卡片样式 (使用 md-card 配合自定义样式) */
-        .custom-card {
-            width: 300px;
-            cursor: pointer;
-            border-radius: 12px; /* MD3 默认圆角 */
-            overflow: hidden;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 轻微阴影 */
-            transition: transform 0.2s, box-shadow 0.2s;
-            animation: fadeIn 0.3s ease-in-out;
-        }
-
-        .custom-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-        }
-
-        /* 6. 蓝白渐变标题区域 */
-        .card-header {
-            /* 蓝白渐变色 */
-            background: linear-gradient(135deg, #4285f4, #ffffff); 
-            padding: 15px;
-            color: #1a2b4b; /* 深色文字以保证可读性 */
-            font-weight: 700;
-            font-size: 1.2em;
-            letter-spacing: 0.5px;
-            text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5); /* 稍微增加文字立体感 */
-            position: relative;
-        }
-
-        /* 7. 分类标签样式 */
-        .category-tag {
-            display: inline-block;
-            background-color: rgba(255, 255, 255, 0.3);
-            color: #1a2b4b;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 0.75em;
-            margin-right: 8px;
-            font-weight: 500;
-        }
-
-        /* 8. 文章大纲/内容区域 */
-        .card-content {
-            padding: 15px;
-            background-color: white;
-            color: #3c4043;
-        }
-
-        .card-content p {
-            font-size: 0.9em;
-            line-height: 1.6;
-            margin-top: 5px;
-            margin-bottom: 0;
-        }
-
-        /* 9. 跳转链接样式 */
-        .card-link {
-            text-decoration: none; /* 移除下划线 */
-            color: inherit; /* 继承父元素颜色 */
-            display: block; /* 使整个卡片可点击 */
-        }
-
-        /* 10. 底部信息样式 */
-        .footer {
-            margin-top: 50px;
-            text-align: center;
-            color: #666;
-            font-size: 0.9em;
-        }
-
-        .footer-note {
-            font-size: 0.8em;
-            color: #888;
-            margin-top: 5px;
-        }
-
-        /* 11. 动画样式 */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* 12. 响应式设计 */
-        @media (max-width: 768px) {
-            .search-box {
-                width: 100%;
-                max-width: 100%;
-            }
-            
-            .card-container {
-                padding: 0 10px;
-            }
-            
-            .custom-card {
-                width: 100%;
-                max-width: 350px;
-            }
-        }
+        body {font-family: 'Noto Sans SC', sans-serif; background:#f4f7f9; margin:0; padding:20px; display:flex; flex-direction:column; align-items:center;}
+        h1 {color:#1a73e8; margin-bottom:40px;}
+        .search-box {position:relative; width:500px; max-width:90%; margin-bottom:30px;}
+        .search-input {width:100%; padding:14px 45px 14px 20px; border:2px solid #ddd; border-radius:30px; font-size:16px;}
+        .search-input:focus {outline:none; border-color:#4285f4; box-shadow:0 0 0 4px rgba(66,133,244,0.15);}
+        .search-icon {position:absolute; right:15px; top:50%; transform:translateY(-50%); font-size:20px; color:#888;}
+        .cards {display:flex; flex-wrap:wrap; gap:25px; justify-content:center; max-width:1300px;}
+        .card {width:320px; border-radius:16px; overflow:hidden; box-shadow:0 4px 15px rgba(0,0,0,0.1); transition:all 0.3s;}
+        .card:hover {transform:translateY(-8px); box-shadow:0 12px 25px rgba(0,0,0,0.2);}
+        .header {background:linear-gradient(135deg, #4285f4, #34a853); color:white; padding:20px; font-size:1.3em; font-weight:bold;}
+        .content {background:white; padding:20px; color:#333;}
+        .content p {margin:8px 0 0; color:#555; line-height:1.5;}
+        a {text-decoration:none; color:inherit; display:block;}
+        .result {margin-top:15px; color:#666; font-size:0.9em;}
     </style>
 </head>
 <body>
-
-    <h1>博客</h1>
+    <h1>xiaozhong1906 的工具箱</h1>
     
-    <!-- 搜索导航区域 -->
-    <div class="navigation">
-        <div class="search-box">
-            <input type="text" placeholder="搜索工具..." class="search-input" autocomplete="off">
-            <span class="search-icon">🔍</span>
-        </div>
+    <div class="search-box">
+        <input type="text" placeholder="搜点啥呀..." class="search-input">
+        <span class="search-icon">🔍</span>
+        <div class="result">正在加载工具...</div>
     </div>
 
-    <div class="card-container">
-        
-        <md-card class="custom-card">
-            <a href="htmlcss.html" class="card-link">
-                <div class="card-header">
-                    在线运行html工具
-                </div>
-                <div class="card-content">
-                    <p>支持实时预览HTML/CSS/JS代码编写效果</p>
-                </div>
-            </a>
-        </md-card>
+    <div class="cards">
+        <!-- 这里放你的卡片，复制下面这个就行，想加多少加多少 -->
+        <a href="htmlcss.html"><div class="card">
+            <div class="header">在线运行HTML工具</div>
+            <div class="content"><p>实时预览HTML/CSS/JS代码</p></div>
+        </div></a>
 
-        <md-card class="custom-card">
-            <a href="iiii.html" class="card-link">
-                <div class="card-header">
-                    长链接生成器(美化版)
-                </div>
-                <div class="card-content">
-                    <p>将长链接转换为简洁美观的短链接</p>
-                </div>
-            </a>
-        </md-card>
+        <a href="iiii.html"><div class="card">
+            <div class="header">长链接生成器(美化版)</div>
+            <div class="content"><p>把超级长的链接变短变好看</p></div>
+        </div></a>
 
-        <md-card class="custom-card">
-            <a href="videoplayback.mp4" class="card-link">
-                <div class="card-header">
-                    <span class="category-tag">视频</span>
-                    好看的东西
-                </div>
-                <div class="card-content">
-                    <p>分享一些有趣的视频内容</p>
-                </div>
-            </a>
-        </md-card>
+        <a href="videoplayback.mp4"><div class="card">
+            <div class="header">好看的东西（视频）</div>
+            <div class="content"><p>看完记得转发给别人哈哈哈</p></div>
+        </div></a>
 
-        <md-card class="custom-card">
-            <a href="abc.html" class="card-link">
-                <div class="card-header">
-                    英文美化
-                </div>
-                <div class="card-content">
-                    <p>将普通英文转换为艺术字体和特殊字符</p>
-                </div>
-            </a>
-        </md-card>
+        <a href="abc.html"><div class="card">
+            <div class="header">英文美化</div>
+            <div class="content"><p>普通英文秒变花里胡哨艺术字</p></div>
+        </div></a>
 
-        <md-card class="custom-card">
-            <a href="ewm.html" class="card-link">
-                <div class="card-header">
-                    二维码生成器
-                </div>
-                <div class="card-content">
-                    <p>快速生成各种格式的二维码</p>
-                </div>
-            </a>
-        </md-card>
+        <a href="ewm.html"><div class="card">
+            <div class="header">二维码生成器</div>
+            <div class="content"><p>输入文字/链接，秒出二维码</p></div>
+        </div></a>
 
-        <md-card class="custom-card">
-            <a href="md.html" class="card-link">
-                <div class="card-header">
-                    md识别
-                </div>
-                <div class="card-content">
-                    <p>识别和解析Markdown格式文件内容</p>
-                </div>
-            </a>
-        </md-card>
-
+        <a href="md.html"><div class="card">
+            <div class="header">Markdown 解析器</div>
+            <div class="content"><p>直接扔.md文件进来就能看</p></div>
+        </div></a>
     </div>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const input = document.querySelector('.search-input');
+            const cards = document.querySelectorAll('.card');
+            const result = document.querySelector('.result');
 
-</body>
-</html>            flex-wrap: wrap;
-            gap: 20px;
-            max-width: 1200px;
-            width: 100%;
-            justify-content: center;
-        }
-
-        /* 4. 卡片样式 (使用 md-card 配合自定义样式) */
-        .custom-card {
-            width: 300px;
-            cursor: pointer;
-            border-radius: 12px; /* MD3 默认圆角 */
-            overflow: hidden;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 轻微阴影 */
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .custom-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-        }
-        
-        /* 5. 蓝白渐变标题区域 */
-        .card-header {
-            /* 蓝白渐变色 */
-            background: linear-gradient(135deg, #4285f4, #ffffff); 
-            padding: 15px;
-            color: #1a2b4b; /* 深色文字以保证可读性 */
-            font-weight: 700;
-            font-size: 1.2em;
-            letter-spacing: 0.5px;
-            text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5); /* 稍微增加文字立体感 */
-        }
-        
-        /* 6. 文章大纲/内容区域 */
-        .card-content {
-            padding: 15px;
-            background-color: white;
-            color: #3c4043;
-        }
-
-        .card-content p {
-            font-size: 0.9em;
-            line-height: 1.6;
-            margin-top: 5px;
-            margin-bottom: 0;
-            /* 字体颜色蓝白渐变（只对标题做了，内文保持高可读性） */
-        }
-
-        /* 7. 跳转链接样式 */
-        .card-link {
-            text-decoration: none; /* 移除下划线 */
-            color: inherit; /* 继承父元素颜色 */
-            display: block; /* 使整个卡片可点击 */
-        }
-    </style>
-</head>
-<body>
-
-    <h1>博客</h1>
-    
-
-    <div class="card-container">
-        
-        <md-card class="custom-card">
-            <a href="http://xiaozhong1906.cn/htmlcss.html" class="card-link">
-                <div class="card-header">
-                    在线运行html工具
-                </div>
-                <div class="card-content">
-                    <p>输入或粘贴HTML即可快速预览</p>
-                </div>
-            </a>
-        </md-card>
-
-        <md-card class="custom-card">
-            <a href="iiii.html" class="card-link">
-                <div class="card-header">
-                    长链接生成器(美化版)
-                </div>
-                <div class="card-content">
-                    <p>页面来自github开源项目美好而来页面中有原项目地址</p>
-                </div>
-            </a>
-        </md-card>
-
-        <md-card class="custom-card">
-            <a href="videoplayback.mp4" class="card-link">
-                <div class="card-header">
-                    好看的东西
-                </div>
-                <div class="card-content">
-                    <p>看完记得转发其他人</p>
-                </div>
-            </a>
-        </md-card>
-
-        <md-card class="custom-card">
-            <a href="abc.html" class="card-link">
-                <div class="card-header">
-                    英文美化
-                </div>
-                <div class="card-content">
-                    <p>把普通的英文变得有趣起来</p>
-                </div>
-            </a>
-        </md-card>
-
-        <md-card class="custom-card">
-            <a href="ewm.html" class="card-link">
-                <div class="card-header">
-                    二维码生成器
-                </div>
-                <div class="card-content">
-                    <p>一个生成QR的工具</p>
-                </div>
-            </a>
-        </md-card>
-
-        <md-card class="custom-card">
-            <a href="md.html" class="card-link">
-                <div class="card-header">
-                    md识别
-                </div>
-                <div class="card-content">
-                    <p>识别.md文件</p>
-                </div>
-            </a>
-        </md-card>
-
-    </div>
-
+            input.addEventListener('input', () => {
+                const key = input.value.trim().toLowerCase();
+                let visible = 0;
+                
+                cards.forEach(card => {
+                    const text = card.textContent.toLowerCase();
+                    if (key === '' || text.includes(key)) {
+                        card.parentElement.style.display = 'block';
+                        visible++;
+                    } else {
+                        card.parentElement.style.display = 'none';
+                    }
+                });
+                
+                result.textContent = key === '' ? `共 \( {cards.length} 个工具` : `找到 \){visible} 个结果`;
+            });
+            
+            // 初始显示
+            result.textContent = `共 ${cards.length} 个工具`;
+        });
+    </script>
 </body>
 </html>
