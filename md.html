@@ -3,564 +3,414 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Markdown 识别器</title>
+    <title>Markdown 解析器 - xiaozhong1906</title>
     
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     
-    <!-- Material Symbols -->
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
-    
-    <!-- Markdown解析库 -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    
+
     <style>
-        /* 全局样式和字体设置 */
+        /* --- 全局设置 --- */
+        :root {
+            --primary-color: #1a73e8;
+            --bg-color: #f4f7f9;
+            --card-bg: #ffffff;
+            --border-color: #e0e0e0;
+        }
+
         body {
-            font-family: 'Noto Sans SC', sans-serif;
-            background-color: #f4f7f9;
             margin: 0;
             padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-        }
-
-        /* 主标题 */
-        h1 {
-            color: #1a73e8;
-            font-weight: 700;
-            margin-bottom: 30px;
-            text-align: center;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
-        }
-
-        /* 副标题 */
-        .subtitle {
-            text-align: center;
-            color: #5f6368;
-            margin-bottom: 40px;
-            font-size: 1.1em;
-        }
-
-        /* 操作按钮容器 */
-        .action-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            max-width: 600px;
-            width: 100%;
-            margin-bottom: 40px;
-        }
-
-        /* 卡片样式 */
-        .custom-card {
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s, box-shadow 0.3s;
-            cursor: pointer;
-        }
-
-        .custom-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        /* 按钮内容区域 */
-        .card-button {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 30px 20px;
-            min-height: 120px;
-            background: linear-gradient(135deg, #4285f4, #ffffff); 
-            border: none;
-            cursor: pointer;
-            text-decoration: none;
-            color: inherit;
-            transition: all 0.3s ease;
-        }
-
-        .card-button:hover {
-            background: linear-gradient(135deg, #3367d6, #f8f9fa);
-        }
-
-        /* 图标样式 */
-        .material-symbols-rounded {
-            font-size: 48px;
-            color: #0b57d0;
-            margin-bottom: 10px;
-            background-image: linear-gradient(to right, #0b57d0, #4285f4);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5); 
-        }
-
-        /* 按钮文字样式 */
-        .button-text {
-            font-size: 1.2em;
-            font-weight: 700;
-            color: #1a2b4b;
-            letter-spacing: 1px;
-        }
-
-        /* 内容显示区域 */
-        .content-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            max-width: 1200px;
-            width: 100%;
-            margin-top: 20px;
-        }
-
-        /* 源文本区域 */
-        .source-area, .preview-area {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            min-height: 400px;
-        }
-
-        .area-title {
-            font-size: 1.3em;
-            font-weight: 700;
-            color: #1a73e8;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #e8f0fe;
-        }
-
-        /* 文本区域 */
-        .text-area {
-            width: 100%;
-            min-height: 300px;
-            border: 1px solid #dadce0;
-            border-radius: 8px;
-            padding: 15px;
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
-            resize: vertical;
-            outline: none;
-            transition: border-color 0.3s ease;
-        }
-
-        .text-area:focus {
-            border-color: #1a73e8;
-            box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
-        }
-
-        /* 预览区域 */
-        .preview-content {
-            padding: 10px;
-            line-height: 1.6;
-        }
-
-        .preview-content h1,
-        .preview-content h2,
-        .preview-content h3,
-        .preview-content h4,
-        .preview-content h5,
-        .preview-content h6 {
-            color: #1a73e8;
-            margin-top: 20px;
-            margin-bottom: 10px;
-        }
-
-        .preview-content p {
-            margin-bottom: 15px;
+            background-color: var(--bg-color);
+            font-family: 'Noto Sans SC', sans-serif;
             color: #333;
+            height: 100vh; /* 充满屏幕高度 */
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-        .preview-content code {
+        /* --- 顶部标题栏 --- */
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 1400px;
+            margin-bottom: 20px;
+        }
+
+        .title-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        h1 {
+            color: var(--primary-color);
+            font-size: 1.5em;
+            margin: 0;
+            font-weight: 700;
+        }
+
+        .material-symbols-rounded {
+            font-variation-settings: 'FILL' 1;
+        }
+
+        /* --- 工具栏 --- */
+        .toolbar {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 50px;
+            font-family: 'Noto Sans SC', sans-serif;
+            font-size: 0.9em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+            color: #5f6368;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .btn:hover {
             background: #f1f3f4;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: 'Courier New', monospace;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .btn.primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        .btn.primary:hover {
+            background-color: #155db1;
+        }
+
+        .btn.danger {
             color: #d93025;
         }
-
-        .preview-content pre {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            overflow-x: auto;
-            margin: 15px 0;
+        .btn.danger:hover {
+            background-color: #fce8e6;
         }
 
-        .preview-content pre code {
-            background: none;
-            padding: 0;
-            color: #333;
+        /* --- 主编辑器容器 (核心布局) --- */
+        .main-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* 左右等分 */
+            gap: 20px;
+            width: 100%;
+            max-width: 1400px;
+            flex-grow: 1; /* 占满剩余高度 */
+            height: 0; /* 配合flex-grow实现内部滚动 */
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+            overflow: hidden; /* 防止容器本身滚动 */
+            position: relative;
         }
 
-        .preview-content blockquote {
-            border-left: 4px solid #1a73e8;
-            margin: 15px 0;
-            padding-left: 15px;
+        /* 左侧：输入区 */
+        .editor-pane {
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            background-color: #fafafa;
+        }
+
+        .pane-header {
+            padding: 12px 20px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.85em;
+            color: #80868b;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: white;
+        }
+
+        #source {
+            flex-grow: 1;
+            width: 100%;
+            border: none;
+            padding: 20px;
+            resize: none;
+            outline: none;
+            font-family: 'Fira Code', 'Monaco', monospace; /* 编程字体 */
+            font-size: 15px;
+            line-height: 1.6;
+            background-color: transparent;
+            box-sizing: border-box;
+            color: #202124;
+        }
+
+        /* 拖拽时的样式 */
+        #source.dragover {
+            background-color: #e8f0fe;
+            box-shadow: inset 0 0 0 2px var(--primary-color);
+        }
+
+        /* 右侧：预览区 */
+        .preview-pane {
+            padding: 20px 40px;
+            overflow-y: auto; /* 独立滚动 */
+            background-color: white;
+            line-height: 1.8;
+            color: #3c4043;
+        }
+
+        /* --- Markdown 渲染样式 (Typography) --- */
+        .preview-pane h1, .preview-pane h2, .preview-pane h3 {
+            color: var(--primary-color);
+            margin-top: 1.5em;
+            margin-bottom: 0.8em;
+        }
+        .preview-pane h1 { border-bottom: 2px solid #f1f3f4; padding-bottom: 10px; }
+        .preview-pane p { margin-bottom: 1.2em; }
+        .preview-pane a { color: var(--primary-color); text-decoration: none; }
+        .preview-pane a:hover { text-decoration: underline; }
+        .preview-pane blockquote {
+            border-left: 4px solid var(--primary-color);
+            margin: 0;
+            padding-left: 16px;
+            color: #5f6368;
             background: #f8f9fa;
-            padding: 15px 15px 15px 20px;
+            padding: 8px 16px;
             border-radius: 0 8px 8px 0;
         }
-
-        .preview-content ul,
-        .preview-content ol {
-            margin: 15px 0;
-            padding-left: 30px;
-        }
-
-        .preview-content li {
-            margin-bottom: 5px;
-        }
-
-        .preview-content table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 15px 0;
-        }
-
-        .preview-content th,
-        .preview-content td {
-            border: 1px solid #dadce0;
-            padding: 8px 12px;
-            text-align: left;
-        }
-
-        .preview-content th {
-            background: #f8f9fa;
-            font-weight: 700;
-        }
-
-        /* 隐藏的文件输入 */
-        #fileInput {
-            display: none;
-        }
-
-        /* 状态消息 */
-        .status-message {
-            text-align: center;
-            padding: 15px;
-            margin: 20px 0;
-            border-radius: 8px;
-            font-weight: 600;
-            display: none;
-        }
-
-        .status-success {
-            background: #e8f5e8;
-            color: #137333;
-            border: 1px solid #34a853;
-        }
-
-        .status-error {
-            background: #fce8e6;
+        .preview-pane img { max-width: 100%; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        
+        /* 行内代码 */
+        .preview-pane code:not(pre code) {
+            background: #f1f3f4;
             color: #d93025;
-            border: 1px solid #ea4335;
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9em;
         }
 
-        .status-info {
-            background: #e8f0fe;
-            color: #1a73e8;
-            border: 1px solid #4285f4;
+        /* --- Dracula 风格代码块 (保留你的最爱) --- */
+        .preview-pane pre {
+            background: #282a36;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 12px;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 14px;
+            box-shadow: 0 4px 15px rgba(40, 42, 54, 0.3);
+            margin: 20px 0;
+        }
+        /* 简单的语法高亮模拟类 (配合JS) */
+        .hljs-keyword { color: #ff79c6; }
+        .hljs-string { color: #f1fa8c; }
+        .hljs-comment { color: #6272a4; }
+        .hljs-number { color: #bd93f9; }
+
+        /* --- 提示框 --- */
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: #323232;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
         }
 
-        /* 响应式设计 */
+        /* --- 响应式适配 --- */
         @media (max-width: 768px) {
-            .content-container {
-                grid-template-columns: 1fr;
+            body { padding: 10px; height: auto; min-height: 100vh; }
+            .main-container {
+                display: flex;
+                flex-direction: column; /* 手机上改为上下排列 */
+                height: auto;
+                flex-grow: 0;
             }
-            
-            .action-container {
-                grid-template-columns: 1fr;
-            }
-            
-            body {
-                padding: 10px;
-            }
-            
-            h1 {
-                margin-bottom: 20px;
-                font-size: 1.8em;
-            }
-        }
-
-        /* 加载动画 */
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #1a73e8;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            #source { min-height: 300px; }
+            .preview-pane { min-height: 300px; border-top: 1px solid var(--border-color); }
+            .toolbar { flex-wrap: wrap; }
+            .btn { flex-grow: 1; justify-content: center; }
         }
     </style>
 </head>
 <body>
 
-    <h1>📝 Markdown 识别器</h1>
-    <p class="subtitle">支持剪贴板粘贴和文件识别的Markdown解析工具</p>
-
-    <!-- 操作按钮区域 -->
-    <div class="action-container">
-        
-        <div class="custom-card">
-            <button class="card-button" id="pasteBtn">
-                <span class="material-symbols-rounded">
-                    content_paste
-                </span>
-                <span class="button-text">
-                    从剪贴板粘贴
-                </span>
-            </button>
+    <header>
+        <div class="title-group">
+            <span class="material-symbols-rounded" style="font-size: 32px; color: var(--primary-color);">description</span>
+            <h1>Markdown 解析器</h1>
         </div>
 
-        <div class="custom-card">
-            <button class="card-button" id="fileBtn">
-                <span class="material-symbols-rounded">
-                    folder_open
-                </span>
-                <span class="button-text">
-                    选择Markdown文件
-                </span>
+        <div class="toolbar">
+            <input type="file" id="fileInput" accept=".md,.markdown,.txt" style="display:none">
+            
+            <button class="btn primary" onclick="document.getElementById('fileInput').click()">
+                <span class="material-symbols-rounded">upload_file</span> 导入文件
+            </button>
+            
+            <button class="btn" onclick="pasteContent()">
+                <span class="material-symbols-rounded">content_paste</span> 粘贴
+            </button>
+            
+            <button class="btn danger" onclick="clearContent()">
+                <span class="material-symbols-rounded">delete</span> 清空
             </button>
         </div>
+    </header>
 
-        <div class="custom-card">
-            <button class="card-button" id="clearBtn">
-                <span class="material-symbols-rounded">
-                    clear
-                </span>
-                <span class="button-text">
-                    清空内容
-                </span>
-            </button>
+    <div class="main-container">
+        <div class="editor-pane">
+            <div class="pane-header">Markdown Source</div>
+            <textarea id="source" placeholder="在此输入 Markdown，或将 .md 文件拖拽至此..."></textarea>
         </div>
 
+        <div class="preview-pane" id="preview">
+            </div>
     </div>
 
-    <!-- 隐藏的文件输入 -->
-    <input type="file" id="fileInput" accept=".md,.markdown,.txt">
-
-    <!-- 状态消息 -->
-    <div id="statusMessage" class="status-message"></div>
-
-    <!-- 内容显示区域 -->
-    <div class="content-container">
-        
-        <!-- 源文本区域 -->
-        <div class="source-area">
-            <div class="area-title">
-                📄 源文本
-            </div>
-            <textarea 
-                id="sourceText" 
-                class="text-area" 
-                placeholder="在这里输入或粘贴Markdown内容，或点击上方按钮从剪贴板/文件导入..."></textarea>
-        </div>
-
-        <!-- 预览区域 -->
-        <div class="preview-area">
-            <div class="area-title">
-                👁️ 预览效果
-            </div>
-            <div id="previewContent" class="preview-content">
-                <p style="color: #999; font-style: italic;">预览区域将在这里显示渲染后的Markdown内容</p>
-            </div>
-        </div>
-
+    <div class="toast" id="toast">
+        <span class="material-symbols-rounded">info</span>
+        <span id="toastMsg">提示信息</span>
     </div>
 
     <script>
-        // DOM 元素
-        const pasteBtn = document.getElementById('pasteBtn');
-        const fileBtn = document.getElementById('fileBtn');
-        const clearBtn = document.getElementById('clearBtn');
+        const source = document.getElementById('source');
+        const preview = document.getElementById('preview');
         const fileInput = document.getElementById('fileInput');
-        const sourceText = document.getElementById('sourceText');
-        const previewContent = document.getElementById('previewContent');
-        const statusMessage = document.getElementById('statusMessage');
+        const toast = document.getElementById('toast');
+        const toastMsg = document.getElementById('toastMsg');
 
-        // 配置 marked.js
-        marked.setOptions({
-            breaks: true,
-            gfm: true,
-            headerIds: false,
-            mangle: false
-        });
-
-        // 显示状态消息
-        function showStatus(message, type = 'info') {
-            statusMessage.textContent = message;
-            statusMessage.className = `status-message status-${type}`;
-            statusMessage.style.display = 'block';
-            
+        // 显示提示
+        function showToast(msg, type = 'info') {
+            toastMsg.textContent = msg;
+            toast.className = 'toast show';
             setTimeout(() => {
-                statusMessage.style.display = 'none';
-            }, 3000);
+                toast.className = 'toast';
+            }, 2500);
         }
 
-        // 更新预览
-        function updatePreview() {
-            const markdownText = sourceText.value.trim();
-            if (markdownText) {
-                const html = marked.parse(markdownText);
-                previewContent.innerHTML = html;
-                showStatus('✅ 预览已更新', 'success');
-            } else {
-                previewContent.innerHTML = '<p style="color: #999; font-style: italic;">预览区域将在这里显示渲染后的Markdown内容</p>';
-            }
-        }
-
-        // 从剪贴板粘贴
-        async function pasteFromClipboard() {
-            try {
-                showStatus('📋 正在读取剪贴板...', 'info');
-                
-                // 检查是否支持剪贴板API
-                if (!navigator.clipboard) {
-                    throw new Error('您的浏览器不支持剪贴板API');
-                }
-
-                // 读取剪贴板内容
-                const text = await navigator.clipboard.readText();
-                
-                if (text.trim()) {
-                    sourceText.value = text;
-                    updatePreview();
-                    showStatus(`✅ 成功从剪贴板粘贴 ${text.length} 个字符`, 'success');
-                } else {
-                    showStatus('⚠️ 剪贴板中没有有效内容', 'error');
-                }
-            } catch (error) {
-                console.error('粘贴失败:', error);
-                showStatus('❌ 粘贴失败: ' + error.message, 'error');
-                
-                // 提供备用方案
-                setTimeout(() => {
-                    showStatus('💡 提示：您也可以手动复制内容到文本框中', 'info');
-                }, 1000);
-            }
-        }
-
-        // 选择并读取文件
-        function selectFile() {
-            fileInput.click();
-        }
-
-        // 处理文件选择
-        function handleFileSelect(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            // 检查文件类型
-            const validExtensions = ['.md', '.markdown', '.txt'];
-            const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
-            
-            if (!validExtensions.includes(fileExtension)) {
-                showStatus('❌ 请选择 .md、.markdown 或 .txt 文件', 'error');
+        // 核心渲染逻辑
+        function render() {
+            const md = source.value;
+            if (!md.trim()) {
+                preview.innerHTML = '<div style="color:#ccc; text-align:center; margin-top:100px;"><span class="material-symbols-rounded" style="font-size:48px; display:block; margin-bottom:10px;">preview</span>等待输入...</div>';
                 return;
             }
 
-            showStatus(`📁 正在读取文件: ${file.name}`, 'info');
-
-            const reader = new FileReader();
+            // 使用 marked 解析
+            let html = marked.parse(md);
             
-            reader.onload = function(e) {
-                const content = e.target.result;
-                sourceText.value = content;
-                updatePreview();
-                showStatus(`✅ 成功加载文件 "${file.name}" (${content.length} 个字符)`, 'success');
-            };
+            // 简单的代码高亮类注入（保持你的 Dracula CSS 生效）
+            // 给 pre code 加上 hljs 类，并简单匹配关键词加颜色
+            html = html.replace(/<pre><code class="(.*?)">/g, '<pre><code class="$1 hljs">');
+            html = html.replace(/<pre><code>/g, '<pre><code class="hljs">');
             
-            reader.onerror = function() {
-                showStatus('❌ 文件读取失败', 'error');
-            };
-            
-            reader.readAsText(file, 'UTF-8');
-            
-            // 清除文件输入的值，允许重复选择同一文件
-            event.target.value = '';
+            preview.innerHTML = html;
         }
 
-        // 清空内容
+        // 粘贴功能
+        async function pasteContent() {
+            try {
+                const text = await navigator.clipboard.readText();
+                source.value = text; // 追加还是覆盖？这里选择覆盖，或者你可以改为 source.value += text;
+                render();
+                showToast('✅ 已从剪贴板粘贴');
+            } catch (err) {
+                showToast('❌ 无法读取剪贴板');
+            }
+        }
+
+        // 清空功能
         function clearContent() {
-            sourceText.value = '';
-            updatePreview();
-            showStatus('🧹 内容已清空', 'info');
+            if(confirm('确定要清空所有内容吗？')) {
+                source.value = '';
+                render();
+                showToast('🧹 内容已清空');
+            }
         }
 
-        // 实时更新预览
-        sourceText.addEventListener('input', debounce(updatePreview, 300));
-
-        // 防抖函数
-        function debounce(func, wait) {
-            let timeout;
-            return function executedFunction(...args) {
-                const later = () => {
-                    clearTimeout(timeout);
-                    func(...args);
-                };
-                clearTimeout(timeout);
-                timeout = setTimeout(later, wait);
+        // 文件处理
+        function handleFile(file) {
+            if (!/\.(md|markdown|txt)$/i.test(file.name)) {
+                showToast('❌ 仅支持 .md / .txt 文件');
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                source.value = e.target.result;
+                render();
+                showToast(`✅ 已加载: ${file.name}`);
             };
+            reader.readAsText(file);
         }
 
-        // 事件监听器
-        pasteBtn.addEventListener('click', pasteFromClipboard);
-        fileBtn.addEventListener('click', selectFile);
-        clearBtn.addEventListener('click', clearContent);
-        fileInput.addEventListener('change', handleFileSelect);
+        // 监听输入 (防抖)
+        let timeoutId;
+        source.addEventListener('input', () => {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(render, 300);
+        });
 
-        // 快捷键支持
-        document.addEventListener('keydown', function(e) {
-            // Ctrl+V (Windows/Linux) 或 Cmd+V (Mac)
-            if ((e.ctrlKey || e.metaKey) && e.key === 'v') {
+        // 拖拽支持 (只在 textarea 上触发)
+        ['dragenter', 'dragover'].forEach(eventName => {
+            source.addEventListener(eventName, (e) => {
                 e.preventDefault();
-                pasteFromClipboard();
-            }
-            
-            // Ctrl+O (Windows/Linux) 或 Cmd+O (Mac) - 打开文件
-            if ((e.ctrlKey || e.metaKey) && e.key === 'o') {
+                e.stopPropagation();
+                source.classList.add('dragover');
+            });
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            source.addEventListener(eventName, (e) => {
                 e.preventDefault();
-                selectFile();
-            }
-            
-            // Ctrl+L (Windows/Linux) 或 Cmd+L (Mac) - 清空
-            if ((e.ctrlKey || e.metaKey) && e.key === 'l') {
-                e.preventDefault();
-                clearContent();
+                e.stopPropagation();
+                source.classList.remove('dragover');
+            });
+        });
+
+        source.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            if (files && files[0]) {
+                handleFile(files[0]);
             }
         });
 
-        // 页面加载完成后的初始化
-        document.addEventListener('DOMContentLoaded', function() {
-            showStatus('🎉 Markdown 识别器已准备就绪', 'success');
-            
-            // 如果支持剪贴板API，显示提示
-            if (navigator.clipboard) {
-                setTimeout(() => {
-                    showStatus('💡 提示：可以尝试 Ctrl+V 直接粘贴剪贴板内容', 'info');
-                }, 2000);
-            }
+        // 文件选择监听
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files[0]) handleFile(fileInput.files[0]);
+            fileInput.value = ''; // 重置，允许重复选择同名文件
         });
 
-        // 错误处理
-        window.addEventListener('error', function(e) {
-            console.error('页面错误:', e.error);
-            showStatus('❌ 页面发生错误，请刷新重试', 'error');
-        });
+        // 初始化
+        const welcomeMsg = "# 欢迎使用 Markdown 解析器\n\n你可以在左侧输入 **Markdown**，右侧会实时显示。\n\n```javascript\nconsole.log('支持代码高亮样式！');\n```\n\n- 支持拖拽文件上传\n- 支持实时预览";
+        source.value = welcomeMsg;
+        render();
+
     </script>
-
 </body>
 </html>
