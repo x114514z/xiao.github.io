@@ -3,98 +3,166 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>xiaozhong1906博客</title>
+    <title>xiaozhong1906 的工具箱</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
-    
-    <!-- 关键：补上这个才能让 md-card 有样子 -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/material-web/1.4.0/material-web.min.css">
-    <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/material-web/1.4.0/material-web.min.js"></script>
-    
     <style>
-        body {font-family: 'Noto Sans SC', sans-serif; background:#f4f7f9; margin:0; padding:20px; display:flex; flex-direction:column; align-items:center;}
-        h1 {color:#1a73e8; margin-bottom:40px;}
-        .search-box {position:relative; width:500px; max-width:90%; margin-bottom:30px;}
-        .search-input {width:100%; padding:14px 45px 14px 20px; border:2px solid #ddd; border-radius:30px; font-size:16px;}
-        .search-input:focus {outline:none; border-color:#4285f4; box-shadow:0 0 0 4px rgba(66,133,244,0.15);}
-        .search-icon {position:absolute; right:15px; top:50%; transform:translateY(-50%); font-size:20px; color:#888;}
-        .cards {display:flex; flex-wrap:wrap; gap:25px; justify-content:center; max-width:1300px;}
-        .card {width:320px; border-radius:16px; overflow:hidden; box-shadow:0 4px 15px rgba(0,0,0,0.1); transition:all 0.3s;}
-        .card:hover {transform:translateY(-8px); box-shadow:0 12px 25px rgba(0,0,0,0.2);}
-        .header {background:linear-gradient(135deg, #4285f4, #34a853); color:white; padding:20px; font-size:1.3em; font-weight:bold;}
-        .content {background:white; padding:20px; color:#333;}
-        .content p {margin:8px 0 0; color:#555; line-height:1.5;}
-        a {text-decoration:none; color:inherit; display:block;}
-        .result {margin-top:15px; color:#666; font-size:0.9em;}
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: #f5f7fa;
+            margin: 0;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        h1 {
+            color: #1a73e8;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+        }
+        /* 搜索框完美版 */
+        .search-box {
+            position: relative;
+            width: 520px;
+            max-width: 92%;
+            margin-bottom: 40px;
+        }
+        .search-input {
+            width: 100%;
+            padding: 16px 50px 16px 24px;
+            border: 3px solid #4285f4;
+            border-radius: 50px;
+            font-size: 18px;
+            box-sizing: border-box;
+            transition: all 0.3s;
+        }
+        .search-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 6px rgba(66,133,244,0.2);
+        }
+        .search-icon {
+            position: absolute;
+            right: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 26px;
+            color: #4285f4;
+            pointer-events: none;
+        }
+        .result {
+            text-align: center;
+            color: #666;
+            margin-top: 12px;
+            font-size: 0.95em;
+        }
+        /* 卡片容器 */
+        .cards {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 28px;
+            justify-content: center;
+            max-width: 1400px;
+        }
+        /* 你最爱的蓝绿渐变卡片 */
+        .card-link {
+            text-decoration: none;
+            display: block;
+            width: 320px;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+            transition: all 0.3s;
+        }
+        .card-link:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 18px 40px rgba(0,0,0,0.2);
+        }
+        .header {
+            background: linear-gradient(135deg, #4285f4, #34a853);
+            color: white;
+            padding: 24px 20px;
+            font-size: 1.4em;
+            font-weight: bold;
+            text-align: center;
+        }
+        .content {
+            background: white;
+            padding: 20px;
+            text-align: center;
+            color: #333;
+        }
+        .content p {
+            margin: 8px 0 0;
+            color: #555;
+            line-height: 1.5;
+        }
+        @media (max-width: 768px) {
+            .card-link {width: 100%; max-width: 380px;}
+            .search-box {width: 100%;}
+        }
     </style>
 </head>
 <body>
-    <h1>xiaozhong1906的博客</h1>
-    
+    <h1>xiaozhong1906 的工具箱</h1>
+
     <div class="search-box">
-        <input type="text" placeholder="搜点啥呀..." class="search-input">
+        <input type="text" placeholder="搜点啥呀..." class="search-input" autocomplete="off">
         <span class="search-icon">🔍</span>
-        <div class="result">正在加载工具...</div>
+        <div class="result">共 6 个工具</div>
     </div>
 
     <div class="cards">
-        <!-- 这里放你的卡片，复制下面这个就行，想加多少加多少 -->
-        <a href="htmlcss.html"><div class="card">
+        <a href="htmlcss.html" class="card-link">
             <div class="header">在线运行HTML工具</div>
             <div class="content"><p>实时预览HTML/CSS/JS代码</p></div>
-        </div></a>
+        </a>
 
-        <a href="iiii.html"><div class="card">
+        <a href="iiii.html" class="card-link">
             <div class="header">长链接生成器(美化版)</div>
             <div class="content"><p>把超级长的链接变短变好看</p></div>
-        </div></a>
+        </a>
 
-        <a href="videoplayback.mp4"><div class="card">
+        <a href="videoplayback.mp4" class="card-link">
             <div class="header">好看的东西（视频）</div>
             <div class="content"><p>看完记得转发给别人哈哈哈</p></div>
-        </div></a>
+        </a>
 
-        <a href="abc.html"><div class="card">
+        <a href="abc.html" class="card-link">
             <div class="header">英文美化</div>
-            <div class="content"><p>普通英文秒变花里胡哨艺术字</p></div>
-        </div></a>
+            <div class="content"><p>普通英文秒变艺术字</p></div>
+        </a>
 
-        <a href="ewm.html"><div class="card">
+        <a href="ewm.html" class="card-link">
             <div class="header">二维码生成器</div>
             <div class="content"><p>输入文字/链接，秒出二维码</p></div>
-        </div></a>
+        </a>
 
-        <a href="md.html"><div class="card">
+        <a href="md.html" class="card-link">
             <div class="header">Markdown 解析器</div>
-            <div class="content"><p>直接扔.md文件进来就能看</p></div>
-        </div></a>
+            <div class="content"><p>直接扔.md文件就能看</p></div>
+        </a>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const input = document.querySelector('.search-input');
-            const cards = document.querySelectorAll('.card');
-            const result = document.querySelector('.result');
+        const searchInput = document.querySelector('.search-input');
+        const cards = document.querySelectorAll('.card-link');
+        const result = document.querySelector('.result');
 
-            input.addEventListener('input', () => {
-                const key = input.value.trim().toLowerCase();
-                let visible = 0;
-                
-                cards.forEach(card => {
-                    const text = card.textContent.toLowerCase();
-                    if (key === '' || text.includes(key)) {
-                        card.parentElement.style.display = 'block';
-                        visible++;
-                    } else {
-                        card.parentElement.style.display = 'none';
-                    }
-                });
-                
-                result.textContent = key === '' ? `共 \( {cards.length} 个工具` : `找到 \){visible} 个结果`;
+        searchInput.addEventListener('input', () => {
+            const key = searchInput.value.trim().toLowerCase();
+            let visible = 0;
+            cards.forEach(card => {
+                const text = card.textContent.toLowerCase();
+                if (key === '' || text.includes(key)) {
+                    card.style.display = 'block';
+                    visible++;
+                } else {
+                    card.style.display = 'none';
+                }
             });
-            
-            // 初始显示
-            result.textContent = `共 ${cards.length} 个工具`;
+            result.textContent = key === '' ? `共 \( {cards.length} 个工具` : `找到 \){visible} 个匹配`;
         });
     </script>
 </body>
-</html>
+                                                     </html>
