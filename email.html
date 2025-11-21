@@ -4,265 +4,111 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>联系我 - Email</title>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
-    <link rel="stylesheet" href="sb.css">
-    
-    <link href="prism-okaidia.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0" rel="stylesheet">
 
     <style>
-        /* 1. 基础布局和淡蓝背景 */
         body {
-            font-family: 'Noto Sans SC', sans-serif;
-            /* 淡蓝色背景，非常柔和 */
-            background-color: #e9f5ff; 
             margin: 0;
-            padding: 0;
+            padding: 40px 20px;
+            background: #f5f9ff;
+            font-family: 'Noto Sans SC', sans-serif;
+            color: #333;
             display: flex;
             justify-content: center;
-        }
-
-        /* 文章容器，限制宽度居中 */
-        .article-container {
-            width: 100%;
-            max-width: 900px;
-            background-color: #ffffff;
-            padding: 40px 60px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
             min-height: 100vh;
-            box-sizing: border-box;
         }
-
-        /* 2. 标题和时间样式 */
-        h1.article-title {
-            color: #1a73e8; /* 蓝色主色调 */
-            font-weight: 700;
-            font-size: 2.5em;
-            margin-bottom: 10px;
+        .card {
+            width: 100%;
+            max-width: 560px;
+            background: white;
+            border-radius: 28px;
+            padding: 50px 40px;
+            box-shadow: 0 12px 35px rgba(50,136,254,0.18);
+            text-align: center;
         }
-
-        .article-meta {
-            color: #707070;
-            font-size: 0.9em;
-            margin-bottom: 30px;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 15px;
-        }
-
-        /* 3. 内容字体粗细 */
-        .article-content p {
-            line-height: 1.8;
-            color: #333;
-            /* 正常文本使用 400 粗细，清晰易读 */
-            font-weight: 400; 
-            margin-bottom: 20px;
-        }
-        
-        .article-content strong {
-            /* 强调部分使用 500 或 700 粗细 */
-            font-weight: 500; 
-            color: #1a73e8;
-        }
-
-        /* 4. 代码块容器样式 (Prism.js 默认样式已很优秀，此处只做增强) */
-        .code-block-container {
-            position: relative;
-            margin: 25px 0;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        /* 5. 复制按钮样式 */
-        .copy-button {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background-color: rgba(255, 255, 255, 0.15);
-            color: #fff;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: background-color 0.2s, transform 0.1s;
+        h1 {
+            color: #3288FE;
+            font-size: 2.3em;
+            margin: 0 0 20px;
             display: flex;
             align-items: center;
-            z-index: 10;
+            justify-content: center;
+            gap: 12px;
         }
+        .material-symbols-rounded {font-size: 40px; font-variation-settings: 'FILL' 1;}
 
-        .copy-button:hover {
-            background-color: rgba(255, 255, 255, 0.3);
+        .email-box {
+            margin: 40px 0;
+            padding: 30px 20px;
+            background: #f8fbff;
+            border: 2px dashed #3288FE;
+            border-radius: 20px;
+            position: relative;
         }
-
-        .copy-button .material-symbols-rounded {
-            font-size: 18px;
-            margin-right: 5px;
+        .email {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #3288FE;
+            user-select: none;
+            letter-spacing: 1px;
         }
-
-        /* 6. 长代码收缩/展开功能样式 */
-        .code-content {
-            /* 保持高度动态变化，用于收缩/展开动画 */
-            transition: max-height 0.5s ease-in-out, opacity 0.5s;
-            overflow: hidden;
-            opacity: 1;
-        }
-
-        .code-content.collapsed {
-            /* 初始收缩高度 */
-            max-height: 300px; 
-            opacity: 1;
-        }
-        
-        /* 隐藏掉多余的部分，但保留阴影/渐变效果 */
-        .code-content.collapsed pre {
-            margin-bottom: 0;
-            padding-bottom: 0;
-        }
-
-        .toggle-overlay {
+        .copy-btn {
             position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 100px; /* 渐变覆盖区域 */
-            background: linear-gradient(to top, rgba(30, 30, 30, 1), rgba(30, 30, 30, 0));
-            pointer-events: none; /* 允许点击穿透到下面的按钮 */
-            z-index: 5;
-        }
-
-        .toggle-button {
-            position: absolute;
-            bottom: 15px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #1a73e8;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #3288FE;
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 20px;
+            padding: 12px 18px;
+            border-radius: 16px;
             cursor: pointer;
-            font-weight: 500;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-            transition: background-color 0.2s;
-            z-index: 6;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
         }
-        
-        .toggle-button:hover {
-            background-color: #0c59d0;
-        }
+        .copy-btn:hover {background: #1575f7; transform: translateY(-50%) scale(1.05);}
 
+        .tip {
+            margin-top: 30px;
+            color: #666;
+            line-height: 1.7;
+        }
+        @media (max-width: 500px) {
+            .card {padding: 40px 25px;}
+            .email {font-size: 1.5em;}
+        }
     </style>
 </head>
 <body>
-
-    <div class="article-container">
+    <div class="card">
+        <h1><span class="material-symbols-rounded">alternate_email</span> 联系邮箱</h1>
         
-        <h1 class="article-title">联系我Email</h1>
-        
-        <div class="article-meta">
-            创建于: 2025年10月12日
+        <div class="email-box">
+            <div class="email">sb@xiaozhong1906.cn</div>
+            <button class="copy-btn" onclick="copyEmail(this)">
+                <span class="material-symbols-rounded">content_copy</span>
+                复制
+            </button>
         </div>
 
-        <div class="article-content">
-            <p>
-                <strong>不要发送垃圾内容</strong>
-            </p>
-
-            <p>邮箱</p>
-
-            <div class="code-block-container short-code">
-                <button class="copy-button" onclick="copyCode(this)">
-                    <span class="material-symbols-rounded">content_copy</span>
-                    复制
-                </button>
-                <pre class="line-numbers"><code class="language-javascript">
-sb@xiaozhong1906.cn
-                </code></pre>
-            </div>
-
+        <div class="tip">
+            <strong>请不要发广告和垃圾邮件哦～</strong><br>
+            有事没事都可以发，哥看到就回（除非在睡觉/摸鱼/打游戏😂）
         </div>
     </div>
-    
-    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
-    
+
     <script>
-        // 定义长代码的行数阈值
-        const LONG_CODE_THRESHOLD = 50; 
-
-        // 1. 复制代码功能
-        async function copyCode(button) {
-            const codeContainer = button.parentElement.querySelector('code');
-            // 复制时仅获取代码文本，忽略行号
-            const codeText = codeContainer.textContent; 
-
-            try {
-                await navigator.clipboard.writeText(codeText);
-                
-                // 成功反馈
-                const originalText = button.innerHTML;
-                button.innerHTML = '<span class="material-symbols-rounded">check</span> 复制成功!';
-                
-                setTimeout(() => {
-                    button.innerHTML = originalText;
-                }, 1500);
-
-            } catch (err) {
-                console.error('复制失败:', err);
-                alert('复制失败，请手动选择复制。');
-            }
-        }
-
-        // 2. 长代码收缩/展开功能 (此处虽然用不到，但为了完整性保留)
-        function toggleCode(button) {
-            const container = button.parentElement;
-            const codeContent = container.querySelector('.code-content');
-            const overlay = container.querySelector('.toggle-overlay');
-            const currentStatus = button.getAttribute('data-status');
-            const totalLines = container.getAttribute('data-lines');
-
-            if (currentStatus === 'collapsed') {
-                codeContent.classList.remove('collapsed');
-                overlay.style.display = 'none';
-                button.innerHTML = '收起代码';
-                button.setAttribute('data-status', 'expanded');
-                
-                codeContent.style.maxHeight = codeContent.scrollHeight + 'px';
-            } else {
-                codeContent.style.maxHeight = '300px';
-                overlay.style.display = 'block';
-                button.innerHTML = `展开代码 (${totalLines} 行)`;
-                button.setAttribute('data-status', 'collapsed');
-            }
-        }
-        
-        // 3. 页面加载时执行的初始化逻辑 (确保所有功能就绪)
-        document.addEventListener('DOMContentLoaded', (event) => {
-            // 自动判断并收缩超过阈值的代码块 (如果存在)
-            document.querySelectorAll('.long-code').forEach(container => {
-                const totalLines = parseInt(container.getAttribute('data-lines'), 10);
-                const button = container.querySelector('.toggle-button');
-                const codeContent = container.querySelector('.code-content');
-                
-                if (totalLines >= LONG_CODE_THRESHOLD) {
-                    codeContent.classList.add('collapsed');
-                    codeContent.style.maxHeight = '300px'; 
-                    button.innerHTML = `展开代码 (${totalLines} 行)`;
-                    button.setAttribute('data-status', 'collapsed');
-                } else {
-                    container.classList.remove('long-code');
-                    button.style.display = 'none';
-                    container.querySelector('.toggle-overlay').style.display = 'none';
-                }
+        function copyEmail(btn) {
+            navigator.clipboard.writeText('sb@xiaozhong1906.cn').then(() => {
+                const old = btn.innerHTML;
+                btn.innerHTML = '<span class="material-symbols-rounded">check</span> 复制成功!';
+                setTimeout(() => btn.innerHTML = old, 1500);
             });
-            
-            Prism.highlightAll(); 
-        });
-
+        }
     </script>
 </body>
 </html>
