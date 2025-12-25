@@ -160,4 +160,80 @@
             text-decoration: none;
             font-weight: 700;
             box-shadow: 0 4px 10px rgba(26, 115, 232, 0.3);
-            transition: background-color 0.3s, transf
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .more-btn:hover {
+            background-color: #155db1;
+            transform: translateY(-2px);
+        }
+
+        .more-note {
+            margin-top: 15px;
+            color: #5f6368;
+            font-size: 0.9em;
+        }
+
+    </style>
+</head>
+<body>
+
+    <h1>xiaozhong1906</h1>
+
+    <div class="search-container">
+        <input type="text" placeholder="搜点啥呀..." class="search-input" autocomplete="off">
+        <span class="material-symbols-rounded search-icon" style="font-size: 24px; -webkit-text-fill-color: #1a73e8; margin: 0;">search</span>
+        <div class="result-text">共 1 个工具</div>
+    </div>
+
+    <div class="card-container">
+        
+        <div class="custom-card">
+            <a href="ujia.html" class="card-link">
+                <span class="material-symbols-rounded">textl</span>
+                <span class="tool-name">u+查询</span>
+                <span class="tool-desc">输入undicoe查询</span>
+            </a>
+        </div>
+
+    <div class="more-container">
+        <a href="gg3.html" class="more-btn">
+            第三页
+        </a>
+        <p class="more-note">总有你没见过的小玩意儿～</p>
+    </div>
+
+    <script>
+        const searchInput = document.querySelector('.search-input');
+        // 注意：这里我们需要控制的是 .custom-card 元素
+        const cards = document.querySelectorAll('.custom-card');
+        const result = document.querySelector('.result-text');
+        let totalTools = 5; // 当前页显示的卡片数
+
+        // 保持原有的计数逻辑 (+1 代表第二页的那个工具)
+        result.textContent = `共 ${totalTools + 1} 个工具`;
+
+        searchInput.addEventListener('input', () => {
+            const key = searchInput.value.trim().toLowerCase();
+            let visible = 0;
+            
+            cards.forEach(card => {
+                // 在卡片内部查找文字内容
+                const text = card.innerText.toLowerCase();
+                if (key === '' || text.includes(key)) {
+                    card.style.display = 'flex'; // 恢复显示
+                    visible++;
+                } else {
+                    card.style.display = 'none'; // 隐藏
+                }
+            });
+            
+            if (key === '') {
+                result.textContent = `共 ${totalTools + 1} 个工具`;
+            } else {
+                result.textContent = visible > 0 ? `找到了 ${visible} 个工具` : `没有找到工具...`;
+            }
+        });
+    </script>
+</body>
+</html>
