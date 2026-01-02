@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>xiaozhong1906 - 工具箱</title>
+    <title>xiaozhong1906</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -180,60 +180,36 @@
 
     <h1>xiaozhong1906</h1>
 
-    <div class="search-container">
-        <input type="text" placeholder="搜点啥呀..." class="search-input" autocomplete="off">
         <span class="material-symbols-rounded search-icon" style="font-size: 24px; -webkit-text-fill-color: #1a73e8; margin: 0;">search</span>
-        <div class="result-text">共 1 个工具</div>
     </div>
 
     <div class="card-container">
         
         <div class="custom-card">
-            <a href="ujia.html" class="card-link">
-                <span class="material-symbols-rounded">textl</span>
-                <span class="tool-name">unicode查询</span>
-                <span class="tool-desc">输入unicode查询</span>
+            <a href="bk.html" class="card-link">
+                <span class="material-symbols-rounded">article</span>
+                <span class="tool-name">中文页面</span>
+                <span class="tool-desc">使用中文语言页面在本页面</span>
+            </a>
+        </div>
+        
+                <div class="custom-card">
+            <a href="https://xzbk.blogspot.com" class="card-link">
+                <span class="material-symbols-rounded">article</span>
+                <span class="tool-name">English webpage</span>
+                <span class="tool-desc">Using an English-language page but employing Google Blogger will redirect to an external page.</span>
+             </a>
+          </div>
+            
+        <div class="custom-card">
+            <a href="gg1.html" class="card-link">
+                <span class="material-symbols-rounded">article</span>
+                <span class="tool-name">快捷工具页面</span>
+                <span class="tool-desc">对于紧急需求页面</span>
+            </a>
+        </div>
             </a>
         </div>
 
-    <div class="more-container">
-        <a href="gg3.html" class="more-btn">
-            第三页
-        </a>
-        <p class="more-note">总有你没见过的小玩意儿～</p>
-    </div>
-
-    <script>
-        const searchInput = document.querySelector('.search-input');
-        // 注意：这里我们需要控制的是 .custom-card 元素
-        const cards = document.querySelectorAll('.custom-card');
-        const result = document.querySelector('.result-text');
-        let totalTools = 5; // 当前页显示的卡片数
-
-        // 保持原有的计数逻辑 (+1 代表第二页的那个工具)
-        result.textContent = `共 ${totalTools + 1} 个工具`;
-
-        searchInput.addEventListener('input', () => {
-            const key = searchInput.value.trim().toLowerCase();
-            let visible = 0;
-            
-            cards.forEach(card => {
-                // 在卡片内部查找文字内容
-                const text = card.innerText.toLowerCase();
-                if (key === '' || text.includes(key)) {
-                    card.style.display = 'flex'; // 恢复显示
-                    visible++;
-                } else {
-                    card.style.display = 'none'; // 隐藏
-                }
-            });
-            
-            if (key === '') {
-                result.textContent = `共 ${totalTools + 1} 个工具`;
-            } else {
-                result.textContent = visible > 0 ? `找到了 ${visible} 个工具` : `没有找到工具...`;
-            }
-        });
-    </script>
 </body>
 </html>
