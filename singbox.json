@@ -1,0 +1,76 @@
+{
+  "log": {
+    "level": "info",
+    "timestamp": true
+  },
+  "dns": {
+    "servers": [
+      { "tag": "google", "type": "tls", "server": "8.8.8.8" },
+      { "tag": "local", "type": "https", "server": "223.5.5.5" },
+      { "tag": "dns_fakeip", "type": "fakeip", "inet4_range": "198.18.0.0/15" }
+    ],
+    "rules": [
+      { "rule_set": "geosite-geolocation-cn", "server": "local" },
+      { "query_type": ["A", "AAAA"], "server": "dns_fakeip" }
+    ],
+    "strategy": "ipv4_only"
+  },
+  "inbounds": [
+    {
+      "type": "tun",
+      "tag": "tun-in",
+      "address": ["172.19.0.1/30"],
+      "auto_route": true,
+      "strict_route": true,
+      "sniff": true
+    }
+  ],
+  "outbounds": [
+    {
+      "type": "selector",
+      "tag": "Proxies",
+      "outbounds": ["🇭🇰 香港 01", "direct"]
+    },
+    {
+      "type": "anytls",
+      "tag": "🇭🇰 香港 01",
+      "server":"Your.node.com",
+      "server_port": 23340,
+      "password": "d2f44b81-649b-4d78-8e1e-b84efce7cc77",
+      "tls": {
+        "enabled": true,
+        "server_name": "moe233-skylinx-45929a5f-f302-c4ab-8f81-a1fd86df23fd.csair.com",
+        "insecure": true
+      }
+    },
+    { "type": "direct", "tag": "direct" }
+  ],
+  "route": {
+    "rules": [
+      { "protocol": "dns", "action": "hijack-dns" },
+      { "rule_set": ["geosite-geolocation-cn", "geoip-cn"], "action": "route", "outbound": "direct" },
+      { "ip_is_private": true, "action": "route", "outbound": "direct" }
+    ],
+    "rule_set": [
+      {
+        "type": "remote",
+        "tag": "geosite-geolocation-cn",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-geolocation-cn.srs",
+        "download_detour": "Proxies"
+      },
+      {
+        "type": "remote",
+        "tag": "geoip-cn",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/SagerNet/sing-geoip/rule-set/geoip-cn.srs",
+        "download_detour": "Proxies"
+      }
+    ],
+    "final": "Proxies",
+    "auto_detect_interface": true
+  },
+  "experimental": {
+    "cache_file": { "enabled": true, "path": "cache.db" }
+  }
+}
