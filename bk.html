@@ -11,7 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
 
     <style>
-        /* --- 1. 全局基础样式 (源自 index.html) --- */
+        /* --- 1. 全局基础样式 --- */
         body {
             font-family: 'Noto Sans SC', sans-serif;
             background-color: #f4f7f9;
@@ -26,57 +26,12 @@
         h1 {
             color: #1a73e8;
             font-weight: 700;
-            margin-bottom: 20px; /* 稍微减小间距给搜索栏腾空间 */
+            margin-bottom: 20px;
             text-align: center;
             font-size: 2.5em;
         }
 
-        /* --- 2. 搜索栏样式 (新设计，匹配整体风格) --- */
-        .search-container {
-            position: relative;
-            width: 100%;
-            max-width: 600px;
-            margin-bottom: 50px;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 18px 50px 18px 24px;
-            border: none;
-            border-radius: 50px;
-            background-color: #ffffff;
-            font-size: 16px;
-            color: #1a2b4b;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            box-sizing: border-box;
-            transition: box-shadow 0.3s, transform 0.3s;
-            font-family: 'Noto Sans SC', sans-serif;
-        }
-
-        .search-input:focus {
-            outline: none;
-            box-shadow: 0 6px 16px rgba(26, 115, 232, 0.2);
-            transform: translateY(-2px);
-        }
-
-        .search-icon {
-            position: absolute;
-            right: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #1a73e8;
-            pointer-events: none;
-            font-size: 24px;
-        }
-
-        .result-text {
-            text-align: center;
-            color: #5f6368;
-            margin-top: 10px;
-            font-size: 0.9em;
-        }
-
-        /* --- 3. 卡片容器布局 (源自 index.html) --- */
+        /* --- 3. 卡片容器布局 --- */
         .card-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -85,14 +40,14 @@
             width: 100%;
         }
 
-        /* --- 4. 卡片基础样式 (源自 index.html) --- */
+        /* --- 4. 卡片基础样式 --- */
         .custom-card {
             border-radius: 16px;
             overflow: hidden;
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s, box-shadow 0.3s;
             background: #fff;
-            display: flex; /* 确保隐藏时布局正确 */
+            display: flex;
             flex-direction: column;
         }
 
@@ -101,7 +56,7 @@
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         }
         
-        /* --- 5. 链接/卡片内容区域 (源自 index.html 并微调) --- */
+        /* --- 5. 链接/卡片内容区域 --- */
         .card-link {
             display: flex;
             flex-direction: column;
@@ -110,14 +65,14 @@
             text-decoration: none; 
             color: inherit; 
             padding: 30px 20px;
-            min-height: 140px; /*稍微加高以容纳描述文字 */
+            min-height: 140px;
             background: linear-gradient(135deg, #4285f4, #ffffff); 
             text-align: center;
             height: 100%;
             box-sizing: border-box;
         }
         
-        /* --- 6. 图标样式 (源自 index.html) --- */
+        /* --- 6. 图标样式 --- */
         .material-symbols-rounded {
             font-size: 48px;
             color: #0b57d0;
@@ -128,7 +83,7 @@
             text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5); 
         }
 
-        /* --- 7. 平台名称/文字样式 (源自 index.html) --- */
+        /* --- 7. 平台名称/文字样式 --- */
         .tool-name {
             font-size: 1.4em;
             font-weight: 700;
@@ -144,7 +99,8 @@
             font-weight: 500;
         }
 
-        /* --- 8. 底部按钮样式 (风格化适配) --- */
+        /* --- 8. 底部按钮样式 (如果需要保留) --- */
+        /* 注意：原文件中底部按钮相关的HTML未提供，如果需要请自行添加 */
         .more-container {
             margin-top: 60px;
             text-align: center;
@@ -180,8 +136,7 @@
 
     <h1>xiaozhong1906</h1>
 
-        <span class="material-symbols-rounded search-icon" style="font-size: 24px; -webkit-text-fill-color: #1a73e8; margin: 0;">search</span>
-    </div>
+    <!-- 搜索栏已移除 -->
 
     <div class="card-container">
         
@@ -193,13 +148,13 @@
             </a>
         </div>
         
-                <div class="custom-card">
+        <div class="custom-card">
             <a href="https://xzbk.blogspot.com" class="card-link">
                 <span class="material-symbols-rounded">article</span>
                 <span class="tool-name">English webpage</span>
                 <span class="tool-desc">Using an English-language page but employing Google Blogger will redirect to an external page.</span>
-             </a>
-          </div>
+            </a> <!-- 修复：移除了多余的 </a> -->
+        </div>
             
         <div class="custom-card">
             <a href="gg.html" class="card-link">
@@ -208,8 +163,16 @@
                 <span class="tool-desc">对于紧急需求页面</span>
             </a>
         </div>
-            </a>
-        </div>
+        <!-- 注意：原文件中这里多了一个 </a> 和 </div>，已移除 -->
+    </div> <!-- 修复：闭合 card-container -->
+
+    <!-- 底部按钮示例 (如果需要) -->
+    <!--
+    <div class="more-container">
+        <a href="#" class="more-btn">更多功能</a>
+        <div class="more-note">点击查看更多选项</div>
+    </div>
+    -->
 
 </body>
 </html>
