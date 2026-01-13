@@ -331,7 +331,7 @@
                 // 使用 codePointAt(0) 拿到它的码点，这招对生僻字和 Emoji 特别管用
                 code = val.codePointAt(0);
                 hex = code.toString(16).toUpperCase();
-                char = val.charAt(0); // 这里只取第一个字符，防止用户输入一串
+                char = Array.from(val)[0]; // 这里只取第一个字符，防止用户输入一串
             }
 
             // --- 显示逻辑 ---
