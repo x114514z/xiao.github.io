@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unicode 偏移转换 - MD3</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Roboto+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --md-sys-color-primary: #6750A4;
+            --md-sys-color-on-primary: #FFFFFF;
+            --md-sys-color-surface: #FEF7FF;
+            --md-sys-color-outline: #79747E;
+            --md-sys-color-surface-variant: #E7E0EC;
+            --md-sys-color-on-surface: #1D1B20;
+            --md-sys-color-secondary-container: #E8DEF8;
+        }
+
+        body {
+            font-family: 'Roboto', system-ui, sans-serif;
+            background-color: var(--md-sys-color-surface);
+            color: var(--md-sys-color-on-surface);
+            margin: 0;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+        }
+
+        header {
+            width: 100%;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 500;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        /* MD3 Card Style */
+        .card {
+            background: var(--md-sys-color-surface-variant);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .card-title {
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 12px;
+            color: var(--md-sys-color-primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* MD3 Text Field */
+        textarea {
+            width: 100%;
+            box-sizing: border-box;
+            background: transparent;
+            border: 1px solid var(--md-sys-color-outline);
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 1rem;
+            font-family: inherit;
+            margin-bottom: 12px;
+            min-height: 100px;
+            transition: border 0.2s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border: 2px solid var(--md-sys-color-primary);
+        }
+
+        /* MD3 Buttons */
+        .btn-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            height: 40px;
+            padding: 0 24px;
+            border-radius: 20px;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-filled {
+            background: var(--md-sys-color-primary);
+            color: var(--md-sys-color-on-primary);
+        }
+
+        .btn-tonal {
+            background: var(--md-sys-color-secondary-container);
+            color: var(--md-sys-color-on-surface);
+        }
+
+        button:active {
+            opacity: 0.8;
+        }
+
+        /* Result Area */
+        .result-box {
+            background: #fff;
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 16px;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 1.2rem;
+            word-break: break-all;
+            min-height: 40px;
+            border: 1px solid var(--md-sys-color-outline);
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin-top: 16px;
+            border-radius: 8px;
+            border: 1px solid var(--md-sys-color-outline);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            background: white;
+        }
+
+        th {
+            background: var(--md-sys-color-secondary-container);
+            padding: 8px;
+            text-align: left;
+        }
+
+        td {
+            padding: 8px;
+            border-top: 1px solid #eee;
+        }
+
+        .footer {
+            font-size: 0.75rem;
+            color: #666;
+            text-align: center;
+            margin: 20px 0;
+            line-height: 1.5;
+        }
+
+        /* Mobile specific adjustments */
+        @media (max-width: 480px) {
+            button { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1><span>🔁</span> 偏移转换 0x1DCBA</h1>
+        </header>
+
+        <div class="card">
+            <div class="card-title">正向转换 (原码 + 0x1DCBA)</div>
+            <textarea id="forwardInput" placeholder="输入原始文字..."></textarea>
+            <div class="btn-group">
+                <button id="forwardBtn" class="btn-filled">执行转换</button>
+                <button id="copyForward" class="btn-tonal">复制结果</button>
+            </div>
+            <div id="forwardOutput" class="result-box"></div>
+            
+            <div class="table-container">
+                <table>
+                    <thead><tr><th>原</th><th>新码点</th><th>新</th></tr></thead>
+                    <tbody id="forwardTbody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">反向还原 (码点 - 0x1DCBA)</div>
+            <textarea id="reverseInput" placeholder="粘贴偏移后的字符..."></textarea>
+            <div class="btn-group">
+                <button id="reverseBtn" class="btn-filled">执行还原</button>
+                <button id="copyReverse" class="btn-tonal">复制结果</button>
+            </div>
+            <div id="reverseOutput" class="result-box"></div>
+
+            <div class="table-container">
+                <table>
+                    <thead><tr><th>偏</th><th>还原码点</th><th>原</th></tr></thead>
+                    <tbody id="reverseTbody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="footer">
+            ⚡ 偏移量固定 0x1DCBA (122554)<br>
+            ⚠️ 新字符可能由于字体覆盖问题显示为 □
+        </div>
+    </div>
+
+    <script>
+        const OFFSET = 0x1DCBA;
+        const MAX_CODEPOINT = 0x10FFFF;
+
+        // 通用转换逻辑
+        function processText(inputId, outputId, tbodyId, isForward) {
+            const text = document.getElementById(inputId).value;
+            const chars = [...text];
+            let results = [];
+            let displayChars = [];
+
+            chars.forEach(ch => {
+                const oldCode = ch.codePointAt(0);
+                const newCode = isForward ? oldCode + OFFSET : oldCode - OFFSET;
+                let newChar = '';
+
+                if (newCode >= 0 && newCode <= MAX_CODEPOINT) {
+                    try { newChar = String.fromCodePoint(newCode); } catch { newChar = '❌'; }
+                } else {
+                    newChar = '⚠️';
+                }
+
+                displayChars.push(newChar);
+                results.push(`<tr>
+                    <td>${ch === ' ' ? '␣' : ch}</td>
+                    <td>U+${newCode.toString(16).toUpperCase()}</td>
+                    <td>${newChar}</td>
+                </tr>`);
+            });
+
+            document.getElementById(outputId).textContent = displayChars.join('');
+            document.getElementById(tbodyId).innerHTML = results.join('');
+        }
+
+        // 绑定事件
+        document.getElementById('forwardBtn').onclick = () => processText('forwardInput', 'forwardOutput', 'forwardTbody', true);
+        document.getElementById('reverseBtn').onclick = () => processText('reverseInput', 'reverseOutput', 'reverseTbody', false);
+
+        // 复制功能
+        function setupCopy(btnId, targetId) {
+            document.getElementById(btnId).onclick = () => {
+                const text = document.getElementById(targetId).textContent;
+                if (!text) return;
+                navigator.clipboard.writeText(text).then(() => {
+                    const btn = document.getElementById(btnId);
+                    const originalText = btn.innerText;
+                    btn.innerText = "已复制！";
+                    setTimeout(() => btn.innerText = originalText, 1500);
+                });
+            };
+        }
+        setupCopy('copyForward', 'forwardOutput');
+        setupCopy('copyReverse', 'reverseOutput');
+
+        // 初始化示例
+        window.onload = () => {
+            document.getElementById('forwardInput').value = '教你写殄文';
+            processText('forwardInput', 'forwardOutput', 'forwardTbody', true);
+        };
+    </script>
+</body>
+</html>
