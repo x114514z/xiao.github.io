@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Link Cleaner - Blog Edition</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
+
+    <style>
+        :root {
+            --primary-blue: #4285f4;
+            --surface-color: #ffffff;
+            --bg-color: #f4f7f9;
+            --text-main: #1a2b4b;
+            --shadow-soft: 0 6px 12px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 12px 24px rgba(66, 133, 244, 0.15);
+        }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            color: var(--text-main);
+        }
+
+        /* 标题样式参考你的博客 */
+        h1 {
+            color: var(--primary-blue);
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .subtitle {
+            color: #5f6368;
+            margin-bottom: 40px;
+            font-size: 0.95rem;
+        }
+
+        /* 主卡片容器 */
+        .main-card {
+            background: #ffffff;
+            max-width: 600px;
+            width: 100%;
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: var(--shadow-soft);
+            transition: transform 0.3s ease;
+        }
+
+        /* 文本域样式 */
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 16px;
+            border: 2px solid #eef2f6;
+            border-radius: 16px;
+            background-color: #fafbfc;
+            font-family: inherit;
+            font-size: 15px;
+            resize: none;
+            transition: all 0.3s ease;
+            color: var(--text-main);
+            box-sizing: border-box;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            background-color: #fff;
+            box-shadow: 0 0 0 4px rgba(66, 133, 244, 0.1);
+        }
+
+        /* 参考你博客 card-link 的渐变按钮 */
+        .action-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 16px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 16px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 16px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            
+            /* 核心渐变色参考 */
+            background: linear-gradient(135deg, var(--primary-blue), #ffffff);
+            background-size: 200% 200%;
+            color: var(--text-main);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+            background-position: right center;
+        }
+
+        .action-btn:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        .action-btn .material-symbols-rounded {
+            font-size: 24px;
+            /* 这里的渐变文字效果参考了你的图标 */
+            background: linear-gradient(to right, #0b57d0, var(--primary-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* 次要按钮组 */
+        .secondary-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .btn-small {
+            padding: 12px;
+            font-size: 14px;
+            background: #fff;
+            border: 1px solid #e0e6ed;
+        }
+
+        /* 提示框 */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            background: #1a2b4b;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 14px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+    <h1>清理链接文字</h1>
+    <p class="subtitle">链接自动清理 · 除去烦人的文字</p>
+
+    <div class="main-card">
+        <div class="secondary-group" style="margin-bottom: 15px;">
+            <button class="action-btn btn-small" onclick="pasteText()">
+                <span class="material-symbols-rounded">content_paste</span>
+                粘贴
+            </button>
+            <button class="action-btn btn-small" style="color: #d93025;" onclick="clearAll()">
+                <span class="material-symbols-rounded" style="background: #d93025; -webkit-text-fill-color: transparent; -webkit-background-clip: text;">delete</span>
+                清空
+            </button>
+        </div>
+
+        <div class="input-group">
+            <textarea id="input" placeholder="请在这里粘贴包含杂质的链接..."></textarea>
+        </div>
+
+        <button class="action-btn" onclick="process()">
+            <span class="material-symbols-rounded">auto_fix_high</span>
+            立即执行清理转换
+        </button>
+
+        <div style="margin: 20px 0; height: 1px; background: #eee;"></div>
+
+        <div class="input-group">
+            <textarea id="output" readonly placeholder="干净的链接会出现在这里"></textarea>
+        </div>
+
+        <div class="secondary-group">
+            <button class="action-btn btn-small" onclick="copyText()">
+                <span class="material-symbols-rounded">content_copy</span>
+                复制结果
+            </button>
+            <button class="action-btn btn-small" onclick="openLink()">
+                <span class="material-symbols-rounded">open_in_new</span>
+                直接打开
+            </button>
+        </div>
+    </div>
+
+    <div id="toast" class="toast">复制成功</div>
+
+    <script>
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 2000);
+        }
+
+        async function pasteText() {
+            try {
+                const text = await navigator.clipboard.readText();
+                document.getElementById('input').value = text;
+                showToast('已粘贴内容');
+            } catch(e) { showToast('请手动粘贴'); }
+        }
+
+        function clearAll() {
+            document.getElementById('input').value = '';
+            document.getElementById('output').value = '';
+            showToast('已清空');
+        }
+
+        function process() {
+            const raw = document.getElementById('input').value;
+            if(!raw) return showToast('没东西可以转换呀~');
+            
+            // 沿用你的核心逻辑
+            let res = raw.replace(/\[.*?\]/g, '');
+            res = res.replace(/[^a-zA-Z0-9./:?=&#_@%~$+\-()!]/g, '');
+            
+            document.getElementById('output').value = res;
+            showToast('转换成功！✨');
+        }
+
+        function copyText() {
+            const out = document.getElementById('output');
+            if(!out.value) return;
+            out.select();
+            document.execCommand('copy');
+            showToast('已复制到剪贴板');
+        }
+
+        function openLink() {
+            const url = document.getElementById('output').value;
+            if(url) window.open(url, '_blank');
+        }
+    </script>
+</body>
+</html>
