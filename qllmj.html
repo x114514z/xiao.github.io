@@ -159,9 +159,40 @@
             opacity: 1;
             transform: translateY(0);
         }
+
+        /* ===== 新增可点击文字样式 ===== */
+        .clickable-text {
+            text-align: center;
+            margin-top: 30px;          /* 与上方按钮保持间距 */
+            margin-bottom: 0;
+        }
+        .clickable-link {
+            color: var(--primary-blue);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            border-bottom: 1px dashed currentColor;
+            padding-bottom: 2px;
+            transition: color 0.2s, border-bottom-color 0.2s;
+            cursor: pointer;
+        }
+        .clickable-link:hover {
+            color: #0b57d0;
+            border-bottom-color: transparent; /* 悬浮时下划线变实线？或者隐藏，这里隐藏虚线，模拟悬浮效果 */
+        }
+        .clickable-link .material-symbols-rounded {
+            font-size: 18px;
+            vertical-align: middle;
+            margin-right: 4px;
+            background: linear-gradient(135deg, var(--primary-blue), #0b57d0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
     </style>
 </head>
 <body>
+<!-- 原有干扰链接 (未改动) -->
+<a href="https://xiaozhong1906.cn/cdn-cgi/content?id=rrTp7XEHOoSwSj2rB0xZfYCP6wkSy1C3jskDsiJjgI4-1771741308.2972898-1.0.1.1-Tpdj2OA8VhKz4xf9wDsemqvMdi27dbOMOZXCQ0kb024" aria-hidden="true" rel="nofollow noopener" style="display: none !important; visibility: hidden !important"></a>
 
     <h1>清理链接文字</h1>
     <p class="subtitle">链接自动清理 · 除去烦人的文字</p>
@@ -202,6 +233,14 @@
                 <span class="material-symbols-rounded">open_in_new</span>
                 直接打开
             </button>
+        </div>
+
+        <!-- ★ 新增的可点击文字区域 (放在最下面) -->
+        <div class="clickable-text">
+            <a class="clickable-link" href="https://x114514z.github.io/tuk.github.io/LICENSE.txt" target="_blank" rel="noopener">
+                <span class="material-symbols-rounded">favorite</span>
+                MIT license
+            </a>
         </div>
     </div>
 
@@ -254,5 +293,7 @@
             if(url) window.open(url, '_blank');
         }
     </script>
+<!-- 原有底部 script (未改动) -->
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d1c62a8d927f957',t:'MTc3MTc0MTMwOA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
 </body>
 </html>
