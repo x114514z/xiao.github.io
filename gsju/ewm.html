@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>二维码生成器 - 核心版</title>
+    <!-- 仅保留 qrcode 库，移除所有样式与字体链接 -->
+    <script src="/qita/qrcode.min.js"></script>
+</head>
+<body>
+    <!-- 完全移除样式类，只保留功能结构和最基础的交互元素 -->
+    <div>
+        <h1>二维码生成器</h1>
+
+        <!-- 输入框：无样式类，保留 placeholder 与 autofocus -->
+        <input type="text" id="qr-input" placeholder="输入链接或文字，回车或点按钮生成" autofocus>
+
+        <!-- 按钮容器：无样式，仅保留两个按钮及 onclick 事件 -->
+        <div>
+            <button id="gen-btn" onclick="gen()">生成</button>
+            <button id="dl-btn" onclick="download()" disabled>下载</button>
+        </div>
+
+        <!-- 二维码容器：id保留，用于绘制二维码 -->
+        <div id="qr-code"></div>
+
+        <!-- 纯文本提示，移除所有样式类 -->
+        <div>
+           
+        </div>
+    </div>
+
+    <script>
+        // 核心逻辑完全保留，无任何改动
+        const input = document.getElementById('qr-input');
+        const container = document.getElementById('qr-code');
+        const dlBtn = document.getElementById('dl-btn');
+        let qrInstance = null;
+
+        function gen() {
+            const text = input.value.trim();
+            if (!text) return alert('出现问题');
+
+            container.innerHTML = '';
+            qrInstance = new QRCode(container, {
+                text: text,
+                width: 280,
+                height: 280,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+            dlBtn.disabled = false;
+        }
+
+        function download() {
+            const canvas = container.querySelector('canvas');
+            const link = document.createElement('a');
+            link.download = '二维码-' + Date.now() + '.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        // 回车生成 + 页面加载默认生成一个
+        input.addEventListener('keypress', e => e.key === 'Enter' && gen());
+        window.onload = () => {
+            input.value = '1';
+            gen();
+        };
+    </script>
+</body>
+</html>
