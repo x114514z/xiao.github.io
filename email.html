@@ -3,112 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>联系我 - Email</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0" rel="stylesheet">
-
-    <style>
-        body {
-            margin: 0;
-            padding: 40px 20px;
-            background: #f5f9ff;
-            font-family: 'Noto Sans SC', sans-serif;
-            color: #333;
-            display: flex;
-            justify-content: center;
-            min-height: 100vh;
-        }
-        .card {
-            width: 100%;
-            max-width: 560px;
-            background: white;
-            border-radius: 28px;
-            padding: 50px 40px;
-            box-shadow: 0 12px 35px rgba(50,136,254,0.18);
-            text-align: center;
-        }
-        h1 {
-            color: #3288FE;
-            font-size: 2.3em;
-            margin: 0 0 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-        }
-        .material-symbols-rounded {font-size: 40px; font-variation-settings: 'FILL' 1;}
-
-        .email-box {
-            margin: 40px 0;
-            padding: 30px 20px;
-            background: #f8fbff;
-            border: 2px dashed #3288FE;
-            border-radius: 20px;
-            position: relative;
-        }
-        .email {
-            font-size: 1.8em;
-            font-weight: bold;
-            color: #3288FE;
-            user-select: none;
-            letter-spacing: 1px;
-        }
-        .copy-btn {
-            position: absolute;
-            right: 16px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: #3288FE;
-            color: white;
-            border: none;
-            padding: 12px 18px;
-            border-radius: 16px;
-            cursor: pointer;
-            font-size: 15px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.2s;
-        }
-        .copy-btn:hover {background: #1575f7; transform: translateY(-50%) scale(1.05);}
-
-        .tip {
-            margin-top: 30px;
-            color: #666;
-            line-height: 1.7;
-        }
-        @media (max-width: 500px) {
-            .card {padding: 40px 25px;}
-            .email {font-size: 1.5em;}
-        }
-    </style>
+    <title>联系我</title>
 </head>
 <body>
-    <div class="card">
-        <h1><span class="material-symbols-rounded">alternate_email</span> 联系邮箱</h1>
-        
-        <div class="email-box">
-            <div class="email">sb@xiaozhong1906.cn</div>
-            <button class="copy-btn" onclick="copyEmail(this)">
-                <span class="material-symbols-rounded">content_copy</span>
-                复制
-            </button>
-        </div>
+    <h1>联系邮箱</h1>
+    
+    <p>邮箱地址：sb@xiaozhong1906.cn</p>
 
-        <div class="tip">
-            <strong>请不要发广告和垃圾邮件哦～</strong><br>
-            有事没事都可以发，哥看到就回（除非在睡觉/摸鱼/打游戏😂）
-        </div>
+    <div>
+        <strong>不要发广告和垃圾邮件</strong><br>
     </div>
-
-    <script>
-        function copyEmail(btn) {
-            navigator.clipboard.writeText('sb@xiaozhong1906.cn').then(() => {
-                const old = btn.innerHTML;
-                btn.innerHTML = '<span class="material-symbols-rounded">check</span> 复制成功!';
-                setTimeout(() => btn.innerHTML = old, 1500);
-            });
-        }
-    </script>
 </body>
 </html>

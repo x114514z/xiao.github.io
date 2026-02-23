@@ -4,244 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>xiaozhong1906 - 工具箱</title>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
-
-    <style>
-        /* --- 1. 全局基础样式 (源自 index.html) --- */
-        body {
-            font-family: 'Noto Sans SC', sans-serif;
-            background-color: #f4f7f9;
-            margin: 0;
-            padding: 40px 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-        }
-
-        h1 {
-            color: #1a73e8;
-            font-weight: 700;
-            margin-bottom: 20px; /* 稍微减小间距给搜索栏腾空间 */
-            text-align: center;
-            font-size: 2.5em;
-        }
-
-        /* --- 2. 搜索栏样式 (新设计，匹配整体风格) --- */
-        .search-container {
-            position: relative;
-            width: 100%;
-            max-width: 600px;
-            margin-bottom: 50px;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 18px 50px 18px 24px;
-            border: none;
-            border-radius: 50px;
-            background-color: #ffffff;
-            font-size: 16px;
-            color: #1a2b4b;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            box-sizing: border-box;
-            transition: box-shadow 0.3s, transform 0.3s;
-            font-family: 'Noto Sans SC', sans-serif;
-        }
-
-        .search-input:focus {
-            outline: none;
-            box-shadow: 0 6px 16px rgba(26, 115, 232, 0.2);
-            transform: translateY(-2px);
-        }
-
-        .search-icon {
-            position: absolute;
-            right: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #1a73e8;
-            pointer-events: none;
-            font-size: 24px;
-        }
-
-        .result-text {
-            text-align: center;
-            color: #5f6368;
-            margin-top: 10px;
-            font-size: 0.9em;
-        }
-
-        /* --- 3. 卡片容器布局 (源自 index.html) --- */
-        .card-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 30px;
-            max-width: 1000px;
-            width: 100%;
-        }
-
-        /* --- 4. 卡片基础样式 (源自 index.html) --- */
-        .custom-card {
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s, box-shadow 0.3s;
-            background: #fff;
-            display: flex; /* 确保隐藏时布局正确 */
-            flex-direction: column;
-        }
-
-        .custom-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-        }
-        
-        /* --- 5. 链接/卡片内容区域 (源自 index.html 并微调) --- */
-        .card-link {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none; 
-            color: inherit; 
-            padding: 30px 20px;
-            min-height: 140px; /*稍微加高以容纳描述文字 */
-            background: linear-gradient(135deg, #4285f4, #ffffff); 
-            text-align: center;
-            height: 100%;
-            box-sizing: border-box;
-        }
-        
-        /* --- 6. 图标样式 (源自 index.html) --- */
-        .material-symbols-rounded {
-            font-size: 48px;
-            color: #0b57d0;
-            margin-bottom: 15px;
-            background-image: linear-gradient(to right, #0b57d0, #4285f4);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5); 
-        }
-
-        /* --- 7. 平台名称/文字样式 (源自 index.html) --- */
-        .tool-name {
-            font-size: 1.4em;
-            font-weight: 700;
-            color: #1a2b4b;
-            letter-spacing: 1px;
-            margin-bottom: 8px;
-        }
-
-        .tool-desc {
-            font-size: 0.95em;
-            color: #44566c;
-            line-height: 1.4;
-            font-weight: 500;
-        }
-
-        /* --- 8. 底部按钮样式 (风格化适配) --- */
-        .more-container {
-            margin-top: 60px;
-            text-align: center;
-            width: 100%;
-        }
-
-        .more-btn {
-            display: inline-block;
-            background-color: #1a73e8;
-            color: white;
-            padding: 14px 32px;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 700;
-            box-shadow: 0 4px 10px rgba(26, 115, 232, 0.3);
-            transition: background-color 0.3s, transform 0.2s;
-        }
-
-        .more-btn:hover {
-            background-color: #155db1;
-            transform: translateY(-2px);
-        }
-
-        .more-note {
-            margin-top: 15px;
-            color: #5f6368;
-            font-size: 0.9em;
-        }
-
-    </style>
 </head>
 <body>
 
     <h1>xiaozhong1906</h1>
 
-    <div class="search-container">
-        <input type="text" placeholder="搜点啥呀..." class="search-input" autocomplete="off">
-        <span class="material-symbols-rounded search-icon" style="font-size: 24px; -webkit-text-fill-color: #1a73e8; margin: 0;">search</span>
-        <div class="result-text">共 1 个工具</div>
+    <ul>
+        <li>
+            <a href="ujia.html">
+                <strong>unicode查询</strong>
+                <p>输入unicode查询</p>
+            </a>
+        </li>
+
+        <li>
+            <a href="qllmj.html">
+                <strong>去除链接文字</strong>
+                <p>输入有文字的链接中去除它</p>
+            </a>
+        </li>
+    </ul>
+
+    <div>
+        <a href="gg3.html">第三页</a>
     </div>
 
-    <div class="card-container">
-        
-        <div class="custom-card">
-            <a href="ujia.html" class="card-link">
-                <span class="material-symbols-rounded">article</span>
-                <span class="tool-name">unicode查询</span>
-                <span class="tool-desc">输入unicode查询</span>
-            </a>
-        </div>
-
-        <div class="custom-card">
-            <a href="qllmj.html" class="card-link">
-                <span class="material-symbols-rounded">article</span>
-                <span class="tool-name">去除链接文字</span>
-                <span class="tool-desc">输入有文字的链接中去除它</span>
-            </a>
-        </div>
-
-    <div class="more-container">
-        <a href="gg3.html" class="more-btn">
-            第三页
-        </a>
-        <p class="more-note">总有你没见过的小玩意儿～</p>
-    </div>
-
-    <script>
-        const searchInput = document.querySelector('.search-input');
-        // 注意：这里我们需要控制的是 .custom-card 元素
-        const cards = document.querySelectorAll('.custom-card');
-        const result = document.querySelector('.result-text');
-        let totalTools = 5; // 当前页显示的卡片数
-
-        // 保持原有的计数逻辑 (+1 代表第二页的那个工具)
-        result.textContent = `共 ${totalTools + 1} 个工具`;
-
-        searchInput.addEventListener('input', () => {
-            const key = searchInput.value.trim().toLowerCase();
-            let visible = 0;
-            
-            cards.forEach(card => {
-                // 在卡片内部查找文字内容
-                const text = card.innerText.toLowerCase();
-                if (key === '' || text.includes(key)) {
-                    card.style.display = 'flex'; // 恢复显示
-                    visible++;
-                } else {
-                    card.style.display = 'none'; // 隐藏
-                }
-            });
-            
-            if (key === '') {
-                result.textContent = `共 ${totalTools + 1} 个工具`;
-            } else {
-                result.textContent = visible > 0 ? `找到了 ${visible} 个工具` : `没有找到工具...`;
-            }
-        });
-    </script>
 </body>
 </html>
