@@ -4,61 +4,45 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Markdown 解析器</title>
-    <script src="/qita/marked.min.js"></script>
+    <script src="../qita/marked.min.js"></script>
 </head>
-<body style="margin:0;padding:20px;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;background:#f4f7f9;height:100vh;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;color:#333;">
-    <div style="display:flex;align-items:center;justify-content:space-between;width:100%;max-width:1400px;margin-bottom:20px;">
-        <div style="display:flex;align-items:center;gap:8px;">
-            <h1 style="color:#1a73e8;font-size:1.5em;margin:0;font-weight:700;">Markdown 解析器</h1>
-        </div>
-        <div style="display:flex;gap:12px;">
-            <input type="file" id="fileInput" accept=".md,.markdown,.txt" style="display:none">
-            <button onclick="document.getElementById('fileInput').click()" style="display:flex;align-items:center;gap:6px;padding:8px 16px;border:none;border-radius:50px;font-size:0.9em;font-weight:500;cursor:pointer;background:#1a73e8;color:white;box-shadow:0 2px 5px rgba(0,0,0,0.05);">导入文件</button>
-            <button onclick="pasteContent()" style="display:flex;align-items:center;gap:6px;padding:8px 16px;border:none;border-radius:50px;font-size:0.9em;font-weight:500;cursor:pointer;background:white;color:#5f6368;box-shadow:0 2px 5px rgba(0,0,0,0.05);">粘贴</button>
-            <button onclick="clearContent()" style="display:flex;align-items:center;gap:6px;padding:8px 16px;border:none;border-radius:50px;font-size:0.9em;font-weight:500;cursor:pointer;background:white;color:#d93025;box-shadow:0 2px 5px rgba(0,0,0,0.05);">清空</button>
-        </div>
+<body>
+
+    <h1>Markdown 解析器</h1>
+
+    <div>
+        <input type="file" id="fileInput" accept=".md,.markdown,.txt">
+        <button onclick="document.getElementById('fileInput').click()">导入文件</button>
+        <button onclick="pasteContent()">粘贴</button>
+        <button onclick="clearContent()">清空</button>
     </div>
 
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;width:100%;max-width:1400px;flex-grow:1;height:0;background:white;border-radius:20px;box-shadow:0 8px 24px rgba(0,0,0,0.08);overflow:hidden;">
-        <div style="border-right:1px solid #e0e0e0;display:flex;flex-direction:column;background:#fafafa;">
-            <div style="padding:12px 20px;border-bottom:1px solid #e0e0e0;font-size:0.85em;color:#80868b;font-weight:700;background:white;">Markdown Source</div>
-            <textarea id="source" placeholder="在此输入 Markdown，或将 .md 文件拖拽至此..." style="flex-grow:1;width:100%;border:none;padding:20px;resize:none;outline:none;font-family:monospace;font-size:15px;line-height:1.6;background:transparent;box-sizing:border-box;color:#202124;"></textarea>
-        </div>
-
-        <div id="preview" style="padding:20px 40px;overflow-y:auto;background:white;line-height:1.8;color:#3c4043;"></div>
+    <div id="container" style="display:flex;gap:10px;min-height:400px;">
+        <textarea id="source" placeholder="在此输入 Markdown，或将 .md 文件拖拽至此..." style="flex:1;padding:10px;font-family:monospace;"></textarea>
+        <div id="preview" style="flex:1;padding:10px;overflow-y:auto;border:1px solid #ccc;"></div>
     </div>
 
-    <div id="toast" style="position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-100px);background:#323232;color:white;padding:12px 24px;border-radius:50px;box-shadow:0 4px 12px rgba(0,0,0,0.2);opacity:0;transition:all 0.3s;z-index:1000;display:flex;align-items:center;gap:8px;">
-        <span id="toastMsg">提示信息</span>
-    </div>
+    <div id="toast" style="position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:8px 16px;opacity:0;transition:opacity 0.3s;"></div>
 
     <script>
         const source = document.getElementById('source');
         const preview = document.getElementById('preview');
         const fileInput = document.getElementById('fileInput');
         const toast = document.getElementById('toast');
-        const toastMsg = document.getElementById('toastMsg');
 
         function showToast(msg) {
-            toastMsg.textContent = msg;
+            toast.textContent = msg;
             toast.style.opacity = '1';
-            toast.style.transform = 'translateX(-50%) translateY(0)';
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                toast.style.transform = 'translateX(-50%) translateY(-100px)';
-            }, 2500);
+            setTimeout(() => toast.style.opacity = '0', 2500);
         }
 
         function render() {
             const md = source.value;
             if (!md.trim()) {
-                preview.innerHTML = '<div style="color:#ccc; text-align:center; margin-top:100px;">等待输入...</div>';
+                preview.innerHTML = '等待输入...';
                 return;
             }
-            let html = marked.parse(md);
-            html = html.replace(/<pre><code class="(.*?)">/g, '<pre style="background:#282a36;color:#f8f8f2;padding:20px;border-radius:12px;overflow-x:auto;font-family:monospace;font-size:14px;box-shadow:0 4px 15px rgba(40,42,54,0.3);margin:20px 0;"><code class="$1">');
-            html = html.replace(/<pre><code>/g, '<pre style="background:#282a36;color:#f8f8f2;padding:20px;border-radius:12px;overflow-x:auto;font-family:monospace;font-size:14px;box-shadow:0 4px 15px rgba(40,42,54,0.3);margin:20px 0;"><code>');
-            preview.innerHTML = html;
+            preview.innerHTML = marked.parse(md);
         }
 
         async function pasteContent() {
@@ -100,23 +84,13 @@
             timeoutId = setTimeout(render, 300);
         });
 
-        ['dragenter', 'dragover'].forEach(eventName => {
-            source.addEventListener(eventName, (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                source.style.backgroundColor = '#e8f0fe';
-            });
+        ['dragenter', 'dragover'].forEach(e => {
+            source.addEventListener(e, e => { e.preventDefault(); source.style.backgroundColor = '#e8f0fe'; });
         });
-
-        ['dragleave', 'drop'].forEach(eventName => {
-            source.addEventListener(eventName, (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                source.style.backgroundColor = 'transparent';
-            });
+        ['dragleave', 'drop'].forEach(e => {
+            source.addEventListener(e, e => { e.preventDefault(); source.style.backgroundColor = ''; });
         });
-
-        source.addEventListener('drop', (e) => {
+        source.addEventListener('drop', e => {
             const files = e.dataTransfer.files;
             if (files && files[0]) handleFile(files[0]);
         });

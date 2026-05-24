@@ -4,302 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Unicode码点与字符转换工具</title>
-    <style>
-        :root {
-            --md-sys-color-primary: #006A6A;
-            --md-sys-color-primary-container: #6ff7f7;
-            --md-sys-color-on-primary: #ffffff;
-            --md-sys-color-surface: #f8f9fa;
-            --md-sys-color-surface-container: #ffffff;
-            --md-sys-color-on-surface: #1a1c1e;
-            --md-sys-color-outline: #6f7979;
-            --md-sys-color-shadow: #000000;
-            
-            --border-radius: 12px;
-            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            --transition: all 0.3s ease;
-        }
-        
-        /* 暗色主题 */
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --md-sys-color-primary: #4ddada;
-                --md-sys-color-primary-container: #004f50;
-                --md-sys-color-on-primary: #003738;
-                --md-sys-color-surface: #111314;
-                --md-sys-color-surface-container: #1d1f20;
-                --md-sys-color-on-surface: #e2e2e6;
-                --md-sys-color-outline: #899393;
-                --md-sys-color-shadow: #000000;
-            }
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
-        }
-        
-        body {
-            background-color: var(--md-sys-color-surface);
-            color: var(--md-sys-color-on-surface);
-            line-height: 1.6;
-            min-height: 100vh;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: var(--transition);
-        }
-        
-        .container {
-            width: 100%;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        
-        .card {
-            background-color: var(--md-sys-color-surface-container);
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            padding: 30px;
-            transition: var(--transition);
-        }
-        
-        h1 {
-            color: var(--md-sys-color-primary);
-            margin-bottom: 8px;
-            font-size: 2.2rem;
-            text-align: center;
-        }
-        
-        .subtitle {
-            color: var(--md-sys-color-outline);
-            text-align: center;
-            margin-bottom: 30px;
-            font-size: 1.1rem;
-        }
-        
-        .input-group {
-            margin-bottom: 25px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: var(--md-sys-color-outline);
-            font-weight: 500;
-        }
-        
-        #input {
-            width: 100%;
-            padding: 16px;
-            border: 2px solid #e0e0e0;
-            border-radius: var(--border-radius);
-            font-size: 1.2rem;
-            transition: var(--transition);
-            background-color: var(--md-sys-color-surface);
-            color: var(--md-sys-color-on-surface);
-        }
-        
-        #input:focus {
-            outline: none;
-            border-color: var(--md-sys-color-primary);
-            box-shadow: 0 0 0 3px rgba(0, 106, 106, 0.1);
-        }
-        
-        .examples {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 10px;
-        }
-        
-        .example-btn {
-            background-color: var(--md-sys-color-primary-container);
-            color: var(--md-sys-color-on-primary);
-            border: none;
-            border-radius: 20px;
-            padding: 6px 14px;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-        
-        .example-btn:hover {
-            opacity: 0.9;
-            transform: translateY(-2px);
-        }
-        
-        #output {
-            background-color: var(--md-sys-color-surface);
-            border-radius: var(--border-radius);
-            padding: 20px;
-            margin-top: 25px;
-            min-height: 120px;
-            border: 1px solid rgba(0, 0, 0, 0.05);
-            transition: var(--transition);
-        }
-        
-        .result-container {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            margin-top: 10px;
-            flex-wrap: wrap;
-        }
-        
-        .result-box {
-            flex: 1;
-            min-width: 250px;
-            padding: 15px;
-            border-radius: 8px;
-            background-color: var(--md-sys-color-surface-container);
-            border: 1px solid rgba(0, 0, 0, 0.05);
-        }
-        
-        .result-title {
-            font-size: 0.8rem;
-            color: var(--md-sys-color-outline);
-            margin-bottom: 5px;
-        }
-        
-        .result-value {
-            font-size: 1.4rem;
-            font-weight: bold;
-            color: var(--md-sys-color-primary);
-            word-break: break-all;
-        }
-        
-        .copy-btn {
-            background-color: var(--md-sys-color-primary);
-            color: var(--md-sys-color-on-primary);
-            border: none;
-            border-radius: 8px;
-            padding: 10px 16px;
-            font-size: 0.9rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: var(--transition);
-            margin-top: 10px;
-        }
-        
-        .copy-btn:hover {
-            opacity: 0.9;
-        }
-        
-        .instructions {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid rgba(0, 0, 0, 0.08);
-            color: var(--md-sys-color-outline);
-        }
-        
-        .instructions h3 {
-            color: var(--md-sys-color-primary);
-            margin-bottom: 10px;
-        }
-        
-        .instructions ul {
-            padding-left: 20px;
-        }
-        
-        .instructions li {
-            margin-bottom: 8px;
-        }
-        
-        .instructions code {
-            background-color: rgba(0, 0, 0, 0.05);
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9rem;
-        }
-        
-        .footer {
-            text-align: center;
-            margin-top: 30px;
-            color: var(--md-sys-color-outline);
-            font-size: 0.9rem;
-        }
-        
-        .char-display {
-            font-size: 2.5rem;
-            text-align: center;
-            min-height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: var(--md-sys-color-surface);
-            border-radius: 8px;
-            margin-bottom: 15px;
-            padding: 10px;
-        }
-        
-        @media (max-width: 768px) {
-            .card {
-                padding: 20px;
-            }
-            
-            h1 {
-                font-size: 1.8rem;
-            }
-            
-            .result-container {
-                flex-direction: column;
-            }
-            
-            .result-box {
-                width: 100%;
-            }
-        }
-    </style>
 </head>
 <body>
-    <div class="container">
-        <div class="card">
-            <h1>Unicode 码点与字符转换器</h1>
-            <p class="subtitle">输入Unicode码点（如 U+4E2D）或字符（如 😊），实时获取转换结果</p>
-            
-            <div class="input-group">
-                <label for="input">输入 Unicode 码点或字符：</label>
-                <input type="text" id="input" placeholder="例如: U+4E2D 或 😊 或 中" autocomplete="off">
-                
-                <div class="examples">
-                    <p style="width:100%; margin-bottom: 8px; color: var(--md-sys-color-outline); font-size: 0.9rem;">试试这些例子：</p>
-                    <button class="example-btn" data-example="U+4E2D">U+4E2D (中)</button>
-                    <button class="example-btn" data-example="U+1F600">U+1F600 (😀)</button>
-                    <button class="example-btn" data-example="U+200B">U+200B (零宽空格)</button>
-                    <button class="example-btn" data-example="😊">😊 (笑脸)</button>
-                    <button class="example-btn" data-example="🍎">🍎 (苹果)</button>
-                    <button class="example-btn" data-example="A">A (字母A)</button>
-                </div>
-            </div>
-            
-            <div id="output">
-                <p style="text-align: center; color: var(--md-sys-color-outline); margin-top: 40px;">
-                    输入Unicode码点或字符，查看转换结果
-                </p>
-            </div>
-            
-            <div class="instructions">
-                <h3>使用说明</h3>
-                <ul>
-                    <li>输入格式可以是 <code>U+4E2D</code>（码点）或直接输入字符如 <code>中</code>、<code>😊</code></li>
-                    <li>码点支持4-6位十六进制数字，不区分大小写</li>
-                    <li>支持所有Unicode字符，包括基本多文种平面（BMP）和增补字符（如Emoji）</li>
-                    <li>不可见字符会显示为占位符 □ 并标注"不可见字符"</li>
-                    <li>点击示例按钮可以快速测试</li>
-                </ul>
-            </div>
-            
-            <div class="footer">
-                <p>基于 JavaScript 的 Unicode 转换工具 | 支持 Unicode 13.0 标准（0x10FFFF 以内所有码点）</p>
-            </div>
+
+    <h1>Unicode 码点与字符转换器</h1>
+    <p>输入Unicode码点（如 U+4E2D）或字符（如 😊），实时获取转换结果</p>
+
+    <div>
+        <label for="input">输入 Unicode 码点或字符：</label>
+        <input type="text" id="input" placeholder="例如: U+4E2D 或 😊 或 中" autocomplete="off">
+        <div>
+            <p>试试这些例子：</p>
+            <button onclick="document.getElementById('input').value='U+4E2D';convert()">U+4E2D (中)</button>
+            <button onclick="document.getElementById('input').value='U+1F600';convert()">U+1F600 (😀)</button>
+            <button onclick="document.getElementById('input').value='U+200B';convert()">U+200B (零宽空格)</button>
+            <button onclick="document.getElementById('input').value='😊';convert()">😊 (笑脸)</button>
+            <button onclick="document.getElementById('input').value='🍎';convert()">🍎 (苹果)</button>
+            <button onclick="document.getElementById('input').value='A';convert()">A (字母A)</button>
         </div>
+    </div>
+
+    <div id="output">
+        <p>输入Unicode码点或字符，查看转换结果</p>
     </div>
 
     <script>
@@ -307,100 +33,46 @@
             let inputEl = document.getElementById('input');
             let val = inputEl.value.trim();
             const output = document.getElementById('output');
-            
+
             if (!val) {
-                output.innerHTML = '<p style="text-align: center; color: var(--md-sys-color-outline); margin-top: 40px;">输入Unicode码点或字符，查看转换结果</p>';
+                output.innerHTML = '<p>输入Unicode码点或字符，查看转换结果</p>';
                 return;
             }
 
             let hex, code, char;
 
-            // --- 核心逻辑判断 ---
-            // 正则解释：如果是 U+ 开头，或者长度在 4-6 位且全是 16 进制字符，我们就认为是"码点"
             if (/^(U\+)?[0-9A-Fa-f]{4,6}$/.test(val)) {
                 hex = val.replace(/^U\+/, '').toUpperCase();
                 code = parseInt(hex, 16);
-                // 检查一下是不是合法的 Unicode 范围
                 if (isNaN(code) || code > 0x10FFFF) {
-                    output.innerHTML = '<div class="char-display">❌</div><div class="result-container"><div class="result-box"><div class="result-title">错误</div><div class="result-value" style="color:#f44336;">无效的码点</div></div></div>';
+                    output.innerHTML = '<p>❌ 无效的码点</p>';
                     return;
                 }
                 char = String.fromCodePoint(code);
             } else {
-                // 否则，我们就认为你输入的是"字符"本人
-                // 使用 codePointAt(0) 拿到它的码点，这招对生僻字和 Emoji 特别管用
                 code = val.codePointAt(0);
                 hex = code.toString(16).toUpperCase();
-                char = Array.from(val)[0]; // 这里只取第一个字符，防止用户输入一串
+                char = Array.from(val)[0];
             }
 
-            // --- 显示逻辑 ---
             let display = char;
             let invisibleNote = '';
-            
-            // 处理不可见字符（比如零宽空格 U+200B）
+
             if (char.trim() === '' && char.length > 0) {
                 display = '□';
                 invisibleNote = '（不可见字符）';
             }
-            
-            // 构建输出HTML
+
             output.innerHTML = `
-                <div class="char-display">
-                    ${display}
-                    ${invisibleNote ? `<span style="font-size:1rem; color:var(--md-sys-color-outline); margin-left:10px;">${invisibleNote}</span>` : ''}
-                </div>
-                <div class="result-container">
-                    <div class="result-box">
-                        <div class="result-title">Unicode 码点</div>
-                        <div class="result-value">U+${hex.padStart(4, '0')}</div>
-                        <button class="copy-btn" data-copy="U+${hex.padStart(4, '0')}">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                            </svg>
-                            复制码点
-                        </button>
-                    </div>
-                    <div class="result-box">
-                        <div class="result-title">十进制码点</div>
-                        <div class="result-value">${code}</div>
-                        <button class="copy-btn" data-copy="${code}">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                            </svg>
-                            复制十进制
-                        </button>
-                    </div>
-                </div>
-                <div style="margin-top: 15px; font-size: 0.9rem; color: var(--md-sys-color-outline);">
-                    <p>字符名称：${getCharacterName(code)}</p>
-                    <p>Unicode 版本：${getUnicodeVersion(code)}</p>
-                </div>
+                <div><strong>${display}</strong> ${invisibleNote}</div>
+                <div>Unicode 码点: U+${hex.padStart(4, '0')} <button onclick="navigator.clipboard.writeText('U+${hex.padStart(4, '0')}')">复制</button></div>
+                <div>十进制码点: ${code} <button onclick="navigator.clipboard.writeText('${code}')">复制</button></div>
+                <div>字符名称: ${getCharacterName(code)}</div>
+                <div>Unicode 版本: ${getUnicodeVersion(code)}</div>
             `;
-            
-            // 添加复制功能
-            document.querySelectorAll('.copy-btn').forEach(button => {
-                button.addEventListener('click', function() {
-                    const textToCopy = this.getAttribute('data-copy');
-                    navigator.clipboard.writeText(textToCopy).then(() => {
-                        const originalText = this.innerHTML;
-                        this.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> 已复制';
-                        this.style.backgroundColor = '#4CAF50';
-                        
-                        setTimeout(() => {
-                            this.innerHTML = originalText;
-                            this.style.backgroundColor = '';
-                        }, 2000);
-                    });
-                });
-            });
         }
-        
-        // 获取字符名称（简化版）
+
         function getCharacterName(code) {
-            // 这里可以扩展更完整的字符名称映射
             const specialChars = {
                 0x4E2D: "CJK统一汉字-中",
                 0x1F600: "表情符号-笑脸",
@@ -413,11 +85,9 @@
                 0x41: "拉丁大写字母A",
                 0x61: "拉丁小写字母A"
             };
-            
             return specialChars[code] || "未知字符";
         }
-        
-        // 获取Unicode版本信息
+
         function getUnicodeVersion(code) {
             if (code <= 0xFFFF) return "1.0.0 (基本多文种平面)";
             if (code <= 0x1FFFF) return "2.0+ (增补多文种平面)";
@@ -427,30 +97,13 @@
             if (code <= 0x10FFFF) return "3.1+ (私人使用区及增补字符)";
             return "无效码点";
         }
-        
-        // 页面加载完成后初始化
+
         document.addEventListener('DOMContentLoaded', function() {
             const inputEl = document.getElementById('input');
-            const exampleButtons = document.querySelectorAll('.example-btn');
-            
-            // 输入框监听
             inputEl.addEventListener('input', convert);
             inputEl.addEventListener('keyup', function(event) {
-                if (event.key === 'Enter') {
-                    convert();
-                }
+                if (event.key === 'Enter') convert();
             });
-            
-            // 示例按钮
-            exampleButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const example = this.getAttribute('data-example');
-                    inputEl.value = example;
-                    convert();
-                });
-            });
-            
-            // 初始聚焦到输入框
             inputEl.focus();
         });
     </script>

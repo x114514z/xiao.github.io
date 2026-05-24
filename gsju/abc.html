@@ -1,272 +1,40 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>数学字体转换器</title>
-    
-    <link rel="stylesheet" href="sb.css">
-
-    <style>
-        /* 引入 Google Fonts - Roboto */
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
-
-        :root {
-            /* Material Design 3 风格的蓝白配色 */
-            --color-primary: #007bff; /* 较亮的蓝色 (接近 Light Blue 500-600) */
-            --color-on-primary: #ffffff; /* 白色，用于蓝色背景上的文字 */
-            --color-surface: #f8faff; /* 极浅的蓝色/几乎白色，作为主要背景 */
-            --color-on-surface: #1c1b1f; /* 深色文字，保证可读性 */
-            --color-outline: #c4c4c4; /* 边框/分隔线颜色 */
-            --color-container: #e3f2fd; /* 浅蓝色容器背景 (Light Blue 50) */
-
-            /* 渐变背景 - 从浅蓝到极浅蓝/白色 */
-            --gradient-bg: linear-gradient(135deg, var(--color-surface) 0%, #e3f2fd 50%, #ffffff 100%);
-        }
-
-        body {
-            font-family: 'Roboto', sans-serif;
-            background: var(--gradient-bg); /* 应用渐变背景 */
-            color: var(--color-on-surface);
-            margin: 0;
-            padding: 40px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            box-sizing: border-box;
-        }
-
-        h1 {
-            font-weight: 500;
-            color: var(--color-primary);
-            margin-bottom: 30px;
-            font-size: 2em;
-            text-align: center;
-        }
-
-        /* 容器样式，模拟 M3 卡片/表面 */
-        .container-card {
-            background-color: var(--color-on-primary); /* 白色背景 */
-            padding: 30px;
-            border-radius: 20px; /* 圆角 */
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* 柔和阴影 */
-            max-width: 700px;
-            width: 100%;
-            box-sizing: border-box;
-        }
-        
-        /* 文本输入区域 */
-        #inputText {
-            width: 100%; 
-            padding: 12px;
-            border: 1px solid var(--color-outline);
-            border-radius: 8px;
-            font-size: 1.1em;
-            transition: border-color 0.3s, box-shadow 0.3s;
-            box-sizing: border-box;
-        }
-
-        #inputText:focus {
-            border-color: var(--color-primary);
-            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
-            outline: none;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: var(--color-primary);
-        }
-
-        /* 输出区域 */
-        #output {
-            margin-top: 20px;
-        }
-        
-        #output > div {
-            /* 修正：确保flex容器内的元素对齐 */
-            display: flex;
-            align-items: flex-start; /* 改为从顶部对齐，避免多行文本导致垂直居中错位 */
-            justify-content: space-between;
-            padding: 15px 0;
-            border-bottom: 1px dashed var(--color-outline);
-            transition: background-color 0.2s;
-        }
-
-        #output > div:last-child {
-            border-bottom: none;
-        }
-
-        #output > div:hover {
-            background-color: var(--color-surface);
-        }
-
-        #output span:first-child {
-            /* 字体名称 */
-            font-weight: 400;
-            min-width: 100px; /* 稍微缩短，更合理 */
-            margin-right: 15px;
-            color: #333;
-            flex-shrink: 0; /* 不允许压缩 */
-        }
-
-        #output span:nth-child(2) {
-            /* 转换后的字体内容 */
-            flex-grow: 1;
-            text-align: left;
-            padding-right: 15px; /* 保持与按钮的间距 */
-            font-size: 1.2em;
-            font-weight: 400; 
-            /* 修正核心：强制文本在一行内显示，并在必要时打断单词 */
-            white-space: normal; /* 允许正常换行，但由于容器宽度足够，通常不会换行 */
-            word-break: break-word; /* 避免超长单个字符链溢出 */
-            line-height: 1.5;
-            min-height: 1.5em; /* 保证空文本时高度一致 */
-        }
-
-        /* 按钮样式 (Material Filled Button 风格) */
-        button {
-            background-color: var(--color-primary);
-            color: var(--color-on-primary);
-            border: none;
-            padding: 8px 16px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 0.9em;
-            font-weight: 500;
-            transition: background-color 0.3s, box-shadow 0.3s, transform 0.1s;
-            min-width: 60px; /* 调整宽度，更紧凑 */
-            flex-shrink: 0; /* 不允许压缩 */
-            margin-left: auto; /* 推到最右边 */
-        }
-
-        button:hover {
-            background-color: #0069d9;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-
-        button:active {
-            background-color: #0056b3;
-            transform: scale(0.98);
-        }
-    </style>
 </head>
 <body>
-    <div class="container-card">
-        <h1>数学字体转换器</h1>
-        
-        <div>
-            <label for="inputText">输入文本:</label>
-            <input type="text" id="inputText" placeholder="输入英文字母abcd...">
-        </div>
-        
-        <div id="output">
-            <div style="margin-bottom: 10px;">
-                <span>粗体: </span>
-                <span id="boldOutput"></span>
-                <button onclick="copyToClipboard('boldOutput')">复制</button>
-            </div>
-            
-            <div style="margin-bottom: 10px;">
-                <span>粗斜体: </span>
-                <span id="boldItalicOutput"></span>
-                <button onclick="copyToClipboard('boldItalicOutput')">复制</button>
-            </div>
-            
-            <div style="margin-bottom: 10px;">
-                <span>手写体: </span>
-                <span id="scriptOutput"></span>
-                <button onclick="copyToClipboard('scriptOutput')">复制</button>
-            </div>
-            
-            <div style="margin-bottom: 10px;">
-                <span>双线体: </span>
-                <span id="doubleStruckOutput"></span>
-                <button onclick="copyToClipboard('doubleStruckOutput')">复制</button>
-            </div>
-            
-            <div style="margin-bottom: 10px;">
-                <span>无衬线体: </span>
-                <span id="sansSerifOutput"></span>
-                <button onclick="copyToClipboard('sansSerifOutput')">复制</button>
-            </div>
-            
-            <div style="margin-bottom: 10px;">
-                <span>粗体无衬线: </span>
-                <span id="boldSansSerifOutput"></span>
-                <button onclick="copyToClipboard('boldSansSerifOutput')">复制</button>
-            </div>
-            
-            <div style="margin-bottom: 10px;">
-                <span>单线符文: </span>
-                <span id="frakturOutput"></span>
-                <button onclick="copyToClipboard('frakturOutput')">复制</button>
-            </div>
-        </div>
-    </div> <script>
-        // 字体转换映射表（保持不变）
+
+    <h1>数学字体转换器</h1>
+
+    <div>
+        <label for="inputText">输入文本:</label>
+        <input type="text" id="inputText" placeholder="输入英文字母abcd...">
+    </div>
+
+    <div id="output">
+        <div><span>粗体: </span><span id="boldOutput"></span> <button onclick="copyText('boldOutput')">复制</button></div>
+        <div><span>粗斜体: </span><span id="boldItalicOutput"></span> <button onclick="copyText('boldItalicOutput')">复制</button></div>
+        <div><span>手写体: </span><span id="scriptOutput"></span> <button onclick="copyText('scriptOutput')">复制</button></div>
+        <div><span>双线体: </span><span id="doubleStruckOutput"></span> <button onclick="copyText('doubleStruckOutput')">复制</button></div>
+        <div><span>无衬线体: </span><span id="sansSerifOutput"></span> <button onclick="copyText('sansSerifOutput')">复制</button></div>
+        <div><span>粗体无衬线: </span><span id="boldSansSerifOutput"></span> <button onclick="copyText('boldSansSerifOutput')">复制</button></div>
+        <div><span>单线符文: </span><span id="frakturOutput"></span> <button onclick="copyText('frakturOutput')">复制</button></div>
+    </div>
+
+    <script>
         const fontMaps = {
-            bold: {
-                a: '𝐚', b: '𝐛', c: '𝐜', d: '𝐝', e: '𝐞', f: '𝐟', g: '𝐠', h: '𝐡', i: '𝐢', j: '𝐣',
-                k: '𝐤', l: '𝐥', m: '𝐦', n: '𝐧', o: '𝐨', p: '𝐩', q: '𝐪', r: '𝐫', s: '𝐬', t: '𝐭',
-                u: '𝐮', v: '𝐯', w: '𝐰', x: '𝐱', y: '𝐲', z: '𝐳',
-                A: '𝐀', B: '𝐁', C: '𝐂', D: '𝐃', E: '𝐄', F: '𝐅', G: '𝐆', H: '𝐇', I: '𝐈', J: '𝐉',
-                K: '𝐊', L: '𝐋', M: '𝐌', N: '𝐍', O: '𝐎', P: '𝐏', Q: '𝐐', R: '𝐑', S: '𝐒', T: '𝐓',
-                U: '𝐔', V: '𝐕', W: '𝐖', X: '𝐗', Y: '𝐘', Z: '𝐙'
-            },
-            boldItalic: {
-                a: '𝒂', b: '𝒃', c: '𝒄', d: '𝒅', e: '𝒆', f: '𝒇', g: '𝒈', h: '𝒉', i: '𝒊', j: '𝒋',
-                k: '𝒌', l: '𝒍', m: '𝒎', n: '𝒏', o: '𝒐', p: '𝒑', q: '𝒒', r: '𝒓', s: '𝒔', t: '𝒕',
-                u: '𝒖', v: '𝒗', w: '𝒘', x: '𝒙', y: '𝒚', z: '𝒛',
-                A: '𝑨', B: '𝑩', C: '𝑪', D: '𝑫', E: '𝑬', F: '𝑭', G: '𝑮', H: '𝑯', I: '𝑰', J: '𝑱',
-                K: '𝑲', L: '𝑳', M: '𝑴', N: '𝑵', O: '𝑶', P: '𝑷', Q: '𝑸', R: '𝑹', S: '𝑺', T: '𝑻',
-                U: '𝑼', V: '𝑽', W: '𝑾', X: '𝑿', Y: '𝒀', Z: '𝒁'
-            },
-            script: {
-                a: '𝓪', b: '𝓫', c: '𝓬', d: '𝓭', e: '𝓮', f: '𝓯', g: '𝓰', h: '𝓱', i: '𝓲', j: '𝓳',
-                k: '𝓴', l: '𝓵', m: '𝓶', n: '𝓷', o: '𝓸', p: '𝓹', q: '𝓺', r: '𝓻', s: '𝓼', t: '𝓽',
-                u: '𝓾', v: '𝓿', w: '𝔀', x: '𝔁', y: '𝔂', z: '𝔃',
-                A: '𝓐', B: '𝓑', C: '𝓒', D: '𝓓', E: '𝓔', F: '𝓕', G: '𝓖', H: '𝓗', I: '𝓘', J: '𝓙',
-                K: '𝓚', L: '𝓛', M: '𝓜', N: '𝓝', O: '𝓞', P: '𝓟', Q: '𝓠', R: '𝓡', S: '𝓢', T: '𝓣',
-                U: '𝓤', V: '𝓥', W: '𝓦', X: '𝓧', Y: '𝓨', Z: '𝓩'
-            },
-            doubleStruck: {
-                a: '𝕒', b: '𝕓', c: '𝕔', d: '𝕕', e: '𝕖', f: '𝕗', g: '𝕘', h: '𝕙', i: '𝕚', j: '𝕛',
-                k: '𝕜', l: '𝕝', m: '𝕞', n: '𝕟', o: '𝕠', p: '𝕡', q: '𝕢', r: '𝕣', s: '𝕤', t: '𝕥',
-                u: '𝕦', v: '𝕧', w: '𝕨', x: '𝕩', y: '𝕪', z: '𝕫',
-                A: '𝔸', B: '𝔹', C: 'ℂ', D: '𝔻', E: '𝔼', F: '𝔽', G: '𝔾', H: 'ℍ', I: '𝕀', J: '𝕁',
-                K: '𝕂', L: '𝕃', M: '𝕄', N: 'ℕ', O: '𝕆', P: 'ℙ', Q: 'ℚ', R: 'ℝ', S: '𝕊', T: '𝕋',
-                U: '𝕌', V: '𝕍', W: '𝕎', X: '𝕏', Y: '𝕐', Z: 'ℤ'
-            },
-            sansSerif: {
-                a: '𝖺', b: '𝖻', c: '𝖼', d: '𝖽', e: '𝖾', f: '𝖿', g: '𝗀', h: '𝗁', i: '𝗂', j: '𝗃',
-                k: '𝗄', l: '𝗅', m: '𝗆', n: '𝗇', o: '𝗈', p: '𝗉', q: '𝗊', r: '𝗋', s: '𝗌', t: '𝗍',
-                u: '𝗎', v: '𝗏', w: '𝗐', x: '𝗑', y: '𝗒', z: '𝗓',
-                A: '𝖠', B: '𝖡', C: '𝖢', D: '𝖣', E: '𝖤', F: '𝖥', G: '𝖦', H: '𝖧', I: '𝖨', J: '𝖩',
-                K: '𝖪', L: '𝖫', M: '𝖬', N: '𝖭', O: '𝖮', P: '𝖯', Q: '𝖰', R: '𝖱', S: '𝖲', T: '𝖳',
-                U: '𝖴', V: '𝖵', W: '𝖶', X: '𝖷', Y: '𝖸', Z: '𝖹'
-            },
-            boldSansSerif: {
-                a: '𝗮', b: '𝗯', c: '𝗰', d: '𝗱', e: '𝗲', f: '𝗳', g: '𝗴', h: '𝗵', i: '𝗶', j: '𝗷',
-                k: '𝗸', l: '𝗹', m: '𝗺', n: '𝗻', o: '𝗼', p: '𝗽', q: '𝗾', r: '𝗿', s: '𝘀', t: '𝘁',
-                u: '𝘂', v: '𝘃', w: '𝘄', x: '𝘅', y: '𝘆', z: '𝘇',
-                A: '𝗔', B: '𝗕', C: '𝗖', D: '𝗗', E: '𝗘', F: '𝗙', G: '𝗚', H: '𝗛', I: '𝗜', J: '𝗝',
-                K: '𝗞', L: '𝗟', M: '𝗠', N: '𝗡', O: '𝗢', P: '𝗣', Q: '𝗤', R: '𝗥', S: '𝗦', T: '𝗧',
-                U: '𝗨', V: '𝗩', W: '𝗪', X: '𝗫', Y: '𝗬', Z: '𝗭'
-            },
-            fraktur: {
-                a: '𝔞', b: '𝔟', c: '𝔠', d: '𝔡', e: '𝔢', f: '𝔣', g: '𝔤', h: '𝔥', i: '𝔦', j: '𝔧',
-                k: '𝔨', l: '𝔩', m: '𝔪', n: '𝔫', o: '𝔬', p: '𝔭', q: '𝔮', r: '𝔯', s: '𝔰', t: '𝔱',
-                u: '𝔲', v: '𝔳', w: '𝔴', x: '𝔵', y: '𝔶', z: '𝔷',
-                A: '𝔄', B: '𝔅', C: 'ℭ', D: '𝔇', E: '𝔈', F: '𝔉', G: '𝔊', H: 'ℌ', I: 'ℑ', J: '𝔍',
-                K: '𝔎', L: '𝔏', M: '𝔐', N: '𝔑', O: '𝔒', P: '𝔓', Q: '𝔔', R: 'ℜ', S: '𝔖', T: '𝔗',
-                U: '𝔘', V: '𝔙', W: '𝔚', X: '𝔛', Y: '𝔜', Z: 'ℨ'
-            }
+            bold: {a:'𝐚',b:'𝐛',c:'𝐜',d:'𝐝',e:'𝐞',f:'𝐟',g:'𝐠',h:'𝐡',i:'𝐢',j:'𝐣',k:'𝐤',l:'𝐥',m:'𝐦',n:'𝐧',o:'𝐨',p:'𝐩',q:'𝐪',r:'𝐫',s:'𝐬',t:'𝐭',u:'𝐮',v:'𝐯',w:'𝐰',x:'𝐱',y:'𝐲',z:'𝐳',A:'𝐀',B:'𝐁',C:'𝐂',D:'𝐃',E:'𝐄',F:'𝐅',G:'𝐆',H:'𝐇',I:'𝐈',J:'𝐉',K:'𝐊',L:'𝐋',M:'𝐌',N:'𝐍',O:'𝐎',P:'𝐏',Q:'𝐐',R:'𝐑',S:'𝐒',T:'𝐓',U:'𝐔',V:'𝐕',W:'𝐖',X:'𝐗',Y:'𝐘',Z:'𝐙'},
+            boldItalic: {a:'𝒂',b:'𝒃',c:'𝒄',d:'𝒅',e:'𝒆',f:'𝒇',g:'𝒈',h:'𝒉',i:'𝒊',j:'𝒋',k:'𝒌',l:'𝒍',m:'𝒎',n:'𝒏',o:'𝒐',p:'𝒑',q:'𝒒',r:'𝒓',s:'𝒔',t:'𝒕',u:'𝒖',v:'𝒗',w:'𝒘',x:'𝒙',y:'𝒚',z:'𝒛',A:'𝑨',B:'𝑩',C:'𝑪',D:'𝑫',E:'𝑬',F:'𝑭',G:'𝑮',H:'𝑯',I:'𝑰',J:'𝑱',K:'𝑲',L:'𝑳',M:'𝑴',N:'𝑵',O:'𝑶',P:'𝑷',Q:'𝑸',R:'𝑹',S:'𝑺',T:'𝑻',U:'𝑼',V:'𝑽',W:'𝑾',X:'𝑿',Y:'𝒀',Z:'𝒁'},
+            script: {a:'𝓪',b:'𝓫',c:'𝓬',d:'𝓭',e:'𝓮',f:'𝓯',g:'𝓰',h:'𝓱',i:'𝓲',j:'𝓳',k:'𝓴',l:'𝓵',m:'𝓶',n:'𝓷',o:'𝓸',p:'𝓹',q:'𝓺',r:'𝓻',s:'𝓼',t:'𝓽',u:'𝓾',v:'𝓿',w:'𝔀',x:'𝔁',y:'𝔂',z:'𝔃',A:'𝓐',B:'𝓑',C:'𝓒',D:'𝓓',E:'𝓔',F:'𝓕',G:'𝓖',H:'𝓗',I:'𝓘',J:'𝓙',K:'𝓚',L:'𝓛',M:'𝓜',N:'𝓝',O:'𝓞',P:'𝓟',Q:'𝓠',R:'𝓡',S:'𝓢',T:'𝓣',U:'𝓤',V:'𝓥',W:'𝓦',X:'𝓧',Y:'𝓨',Z:'𝓩'},
+            doubleStruck: {a:'𝕒',b:'𝕓',c:'𝕔',d:'𝕕',e:'𝕖',f:'𝕗',g:'𝕘',h:'𝕙',i:'𝕚',j:'𝕛',k:'𝕜',l:'𝕝',m:'𝕞',n:'𝕟',o:'𝕠',p:'𝕡',q:'𝕢',r:'𝕣',s:'𝕤',t:'𝕥',u:'𝕦',v:'𝕧',w:'𝕨',x:'𝕩',y:'𝕪',z:'𝕫',A:'𝔸',B:'𝔹',C:'ℂ',D:'𝔻',E:'𝔼',F:'𝔽',G:'𝔾',H:'ℍ',I:'𝕀',J:'𝕁',K:'𝕂',L:'𝕃',M:'𝕄',N:'ℕ',O:'𝕆',P:'ℙ',Q:'ℚ',R:'ℝ',S:'𝕊',T:'𝕋',U:'𝕌',V:'𝕍',W:'𝕎',X:'𝕏',Y:'𝕐',Z:'ℤ'},
+            sansSerif: {a:'𝖺',b:'𝖻',c:'𝖼',d:'𝖽',e:'𝖾',f:'𝖿',g:'𝗀',h:'𝗁',i:'𝗂',j:'𝗃',k:'𝗄',l:'𝗅',m:'𝗆',n:'𝗇',o:'𝗈',p:'𝗉',q:'𝗊',r:'𝗋',s:'𝗌',t:'𝗍',u:'𝗎',v:'𝗏',w:'𝗐',x:'𝗑',y:'𝗒',z:'𝗓',A:'𝖠',B:'𝖡',C:'𝖢',D:'𝖣',E:'𝖤',F:'𝖥',G:'𝖦',H:'𝖧',I:'𝖨',J:'𝖩',K:'𝖪',L:'𝖫',M:'𝖬',N:'𝖭',O:'𝖮',P:'𝖯',Q:'𝖰',R:'𝖱',S:'𝖲',T:'𝖳',U:'𝖴',V:'𝖵',W:'𝖶',X:'𝖷',Y:'𝖸',Z:'𝖹'},
+            boldSansSerif: {a:'𝗮',b:'𝗯',c:'𝗰',d:'𝗱',e:'𝗲',f:'𝗳',g:'𝗴',h:'𝗵',i:'𝗶',j:'𝗷',k:'𝗸',l:'𝗹',m:'𝗺',n:'𝗻',o:'𝗼',p:'𝗽',q:'𝗾',r:'𝗿',s:'𝘀',t:'𝘁',u:'𝘂',v:'𝘃',w:'𝘄',x:'𝘅',y:'𝘆',z:'𝘇',A:'𝗔',B:'𝗕',C:'𝗖',D:'𝗗',E:'𝗘',F:'𝗙',G:'𝗚',H:'𝗛',I:'𝗜',J:'𝗝',K:'𝗞',L:'𝗟',M:'𝗠',N:'𝗡',O:'𝗢',P:'𝗣',Q:'𝗤',R:'𝗥',S:'𝗦',T:'𝗧',U:'𝗨',V:'𝗩',W:'𝗪',X:'𝗫',Y:'𝗬',Z:'𝗭'},
+            fraktur: {a:'𝔞',b:'𝔟',c:'𝔠',d:'𝔡',e:'𝔢',f:'𝔣',g:'𝔤',h:'𝔥',i:'𝔦',j:'𝔧',k:'𝔨',l:'𝔩',m:'𝔪',n:'𝔫',o:'𝔬',p:'𝔭',q:'𝔮',r:'𝔯',s:'𝔰',t:'𝔱',u:'𝔲',v:'𝔳',w:'𝔴',x:'𝔵',y:'𝔶',z:'𝔷',A:'𝔄',B:'𝔅',C:'ℭ',D:'𝔇',E:'𝔈',F:'𝔉',G:'𝔊',H:'ℌ',I:'ℑ',J:'𝔍',K:'𝔎',L:'𝔏',M:'𝔐',N:'𝔑',O:'𝔒',P:'𝔓',Q:'𝔔',R:'ℜ',S:'𝔖',T:'𝔗',U:'𝔘',V:'𝔙',W:'𝔚',X:'𝔛',Y:'𝔜',Z:'ℨ'}
         };
 
-        // 转换文本函数（保持不变）
         function convertText(text, fontType) {
             let result = '';
             for (let i = 0; i < text.length; i++) {
@@ -276,10 +44,8 @@
             return result;
         }
 
-        // 更新所有字体变体显示（保持不变）
         function updateOutputs() {
             const inputText = document.getElementById('inputText').value;
-            
             document.getElementById('boldOutput').textContent = convertText(inputText, 'bold');
             document.getElementById('boldItalicOutput').textContent = convertText(inputText, 'boldItalic');
             document.getElementById('scriptOutput').textContent = convertText(inputText, 'script');
@@ -289,23 +55,11 @@
             document.getElementById('frakturOutput').textContent = convertText(inputText, 'fraktur');
         }
 
-        // 复制到剪贴板函数（保持不变）
-        function copyToClipboard(elementId) {
+        function copyText(elementId) {
             const text = document.getElementById(elementId).textContent;
-            
-            const textarea = document.createElement('textarea');
-            textarea.value = text;
-            document.body.appendChild(textarea);
-            
-            textarea.select();
-            document.execCommand('copy');
-            
-            document.body.removeChild(textarea);
-            
-            alert('已复制到剪贴板: ' + text);
+            navigator.clipboard.writeText(text).then(() => alert('已复制: ' + text));
         }
 
-        // 初始化页面加载时更新一次（保持不变）
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('inputText').addEventListener('input', updateOutputs);
             updateOutputs();
