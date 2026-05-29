@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mihomo 配置编辑器</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2333;
+    --border: #30363d;
+    --accent: #58a6ff;
+    --accent2: #3fb950;
+    --accent3: #f78166;
+    --accent4: #d2a8ff;
+    --text: #e6edf3;
+    --text-muted: #7d8590;
+    --text-dim: #484f58;
+    --red: #f85149;
+    --yellow: #e3b341;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: inherit;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 22px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+
+  header .logo {
+    width: 26px; height: 26px;
+    background: linear-gradient(135deg, var(--accent), var(--accent4));
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; color: #fff;
+  }
+  header h1 { font-size: 14px; font-weight: 500; }
+  header span {
+    font-size: 11px; color: var(--text-muted);
+    background: var(--surface2); padding: 2px 7px;
+    border-radius: 4px; border: 1px solid var(--border);
+  }
+
+  .main {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+    height: calc(100vh - 51px);
+  }
+
+  /* ===== LEFT PANEL ===== */
+  .left-panel {
+    width: 360px;
+    min-width: 300px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* Tab nav */
+  .tab-nav {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .tab-btn {
+    flex: 1;
+    padding: 9px 4px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--text-muted);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all .15s;
+    font-family: inherit;
+  }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  .tab-pane { display: none; flex-direction: column; overflow: hidden; flex: 1; }
+  .tab-pane.active { display: flex; }
+
+  /* Scrollable inner */
+  .pane-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px 14px 16px;
+  }
+  .pane-scroll::-webkit-scrollbar { width: 4px; }
+  .pane-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  /* Upload */
+  .upload-area {
+    border: 1.5px dashed var(--border);
+    border-radius: 8px;
+    padding: 18px 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: all .2s;
+    background: var(--bg);
+    margin-bottom: 12px;
+  }
+  .upload-area:hover { border-color: var(--accent); background: rgba(88,166,255,.04); }
+  .upload-area .icon { font-size: 22px; margin-bottom: 5px; }
+  .upload-area p { font-size: 12px; color: var(--text-muted); }
+  .upload-area strong { color: var(--accent); }
+  #file-input { display: none; }
+
+  /* Section label */
+  .sec-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .8px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .sec-label span { color: var(--accent); font-weight: 700; }
+
+  /* Provider card */
+  .provider-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    margin-bottom: 8px;
+  }
+  .card-header {
+    display: flex; align-items: center; gap: 7px;
+    padding: 8px 10px;
+    background: var(--surface2);
+    border-radius: 7px 7px 0 0;
+    cursor: pointer;
+  }
+  .card-header .num {
+    width: 18px; height: 18px; border-radius: 3px;
+    background: var(--accent); color: #fff;
+    font-size: 10px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .card-header .cname { font-size: 12px; font-family: monospace; color: var(--accent4); flex: 1; }
+  .card-header .del-btn {
+    width: 20px; height: 20px; background: none; border: none;
+    color: var(--text-dim); cursor: pointer; border-radius: 3px;
+    font-size: 13px; display: flex; align-items: center; justify-content: center;
+    transition: all .15s;
+  }
+  .card-header .del-btn:hover { background: rgba(248,81,73,.15); color: var(--red); }
+
+  .card-body { padding: 9px 10px; }
+  .card-body.collapsed { display: none; }
+
+  .field { margin-bottom: 7px; }
+  .field:last-child { margin-bottom: 0; }
+  .field label { font-size: 10px; text-transform: uppercase; letter-spacing: .5px; color: var(--text-muted); display: block; margin-bottom: 3px; }
+
+  input[type="text"], input[type="number"], select, textarea {
+    width: 100%; background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 4px; color: var(--text); font-family: monospace; font-size: 12px;
+    padding: 5px 7px; outline: none; transition: border-color .15s;
+  }
+  input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+  select { cursor: pointer; }
+  select option { background: var(--surface2); }
+  textarea { resize: vertical; min-height: 44px; font-size: 11px; }
+
+  .add-btn {
+    width: 100%; padding: 7px; background: transparent;
+    border: 1.5px dashed var(--border); border-radius: 5px;
+    color: var(--text-muted); font-size: 11px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 5px;
+    transition: all .15s; font-family: inherit; margin-top: 4px;
+  }
+  .add-btn:hover { border-color: var(--accent2); color: var(--accent2); }
+
+  /* Tags */
+  .tags-wrap {
+    display: flex; gap: 5px; flex-wrap: wrap;
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 5px; padding: 5px; min-height: 34px; cursor: text;
+  }
+  .tags-wrap:focus-within { border-color: var(--accent); }
+  .tag {
+    display: flex; align-items: center; gap: 3px;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 3px; padding: 1px 5px;
+    font-size: 11px; font-family: monospace; color: var(--accent4);
+  }
+  .tag.rtag { color: var(--accent2); }
+  .tag button { background: none; border: none; color: var(--text-dim); cursor: pointer; font-size: 11px; padding: 0; line-height: 1; }
+  .tag button:hover { color: var(--red); }
+  .tags-wrap input {
+    background: none; border: none; outline: none; color: var(--text);
+    font-size: 12px; font-family: monospace; flex: 1; min-width: 70px; padding: 0;
+  }
+  .hint { font-size: 10px; color: var(--text-dim); margin-top: 2px; margin-bottom: 6px; }
+
+  /* ===== RULES PANE ===== */
+  .rules-toolbar {
+    display: flex; gap: 6px; align-items: center;
+    padding: 10px 14px 8px; flex-shrink: 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .rules-toolbar select { flex: 1; font-size: 11px; }
+  .rules-toolbar input { flex: 2; font-size: 11px; }
+  .rules-toolbar .policy-sel { flex: 1.2; }
+  .sm-btn {
+    padding: 5px 10px; border-radius: 4px; border: 1px solid var(--border);
+    font-size: 11px; cursor: pointer; background: var(--surface2);
+    color: var(--text-muted); font-family: inherit; white-space: nowrap;
+    transition: all .15s;
+  }
+  .sm-btn:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .sm-btn.danger:hover { background: var(--red); border-color: var(--red); color: #fff; }
+
+  .rules-hint {
+    padding: 6px 14px; font-size: 10px; color: var(--text-dim);
+    border-bottom: 1px solid var(--border); flex-shrink: 0;
+    line-height: 1.6;
+  }
+
+  .rule-list { flex: 1; overflow-y: auto; padding: 8px 14px 16px; }
+  .rule-list::-webkit-scrollbar { width: 4px; }
+  .rule-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .rule-item {
+    display: flex; align-items: center; gap: 6px;
+    padding: 5px 8px;
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 5px; margin-bottom: 5px;
+    font-size: 11px; font-family: monospace;
+  }
+  .rule-item:hover { border-color: var(--text-dim); }
+  .rule-item .rtype {
+    color: var(--accent); font-weight: 600; min-width: 120px;
+    font-size: 10.5px; flex-shrink: 0;
+  }
+  .rule-item .rval { color: var(--text-muted); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .rule-item .rpolicy { color: var(--accent2); min-width: 60px; text-align: right; }
+  .rule-item .rnr { color: var(--yellow); font-size: 9px; padding: 1px 4px; background: rgba(227,179,65,.1); border-radius: 2px; }
+  .rule-item .rdel {
+    width: 18px; height: 18px; background: none; border: none;
+    color: var(--text-dim); cursor: pointer; font-size: 12px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 3px; flex-shrink: 0;
+  }
+  .rule-item .rdel:hover { color: var(--red); background: rgba(248,81,73,.1); }
+
+  .drag-handle { color: var(--text-dim); cursor: grab; font-size: 12px; flex-shrink: 0; }
+  .drag-handle:active { cursor: grabbing; }
+
+  .rule-count { font-size: 10px; color: var(--text-dim); padding: 4px 0 6px; text-align: center; }
+
+  /* No-resolve checkbox row */
+  .nr-row { display: flex; align-items: center; gap: 6px; margin-top: 4px; }
+  .nr-row input[type="checkbox"] { width: auto; accent-color: var(--accent); }
+  .nr-row label { font-size: 11px; color: var(--text-muted); cursor: pointer; }
+
+  /* Type groups in select */
+  optgroup { background: var(--bg); color: var(--text-muted); }
+
+  /* ===== RIGHT PANEL ===== */
+  .right-panel { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+  .output-toolbar {
+    padding: 9px 16px; background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 8px; flex-shrink: 0;
+  }
+  .output-toolbar .info { font-size: 11px; color: var(--text-muted); margin-right: auto; }
+
+  .btn {
+    padding: 5px 12px; border-radius: 5px; border: 1px solid var(--border);
+    font-size: 11px; font-family: inherit; cursor: pointer;
+    display: flex; align-items: center; gap: 5px; font-weight: 500; transition: all .15s;
+  }
+  .btn-primary { background: var(--accent); border-color: transparent; color: #fff; }
+  .btn-primary:hover { background: #79bbff; }
+  .btn-secondary { background: transparent; color: var(--text-muted); }
+  .btn-secondary:hover { background: var(--surface2); color: var(--text); }
+  .btn-success { background: var(--accent2); border-color: transparent; color: #fff; }
+  .btn-success:hover { background: #56d364; }
+
+  .output-wrap { flex: 1; overflow: hidden; position: relative; }
+  #yaml-output {
+    width: 100%; height: 100%; background: var(--bg); border: none; outline: none;
+    color: var(--text); font-family: monospace; font-size: 12.5px;
+    line-height: 1.7; padding: 18px 22px; resize: none; tab-size: 2;
+  }
+
+  .empty-hint {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    color: var(--text-dim); font-size: 13px; gap: 8px; pointer-events: none;
+  }
+  .empty-hint .big { font-size: 32px; }
+
+  .status-bar {
+    height: 22px; background: var(--accent);
+    display: flex; align-items: center; padding: 0 16px; gap: 12px;
+    font-size: 10px; color: rgba(255,255,255,.75); font-family: monospace;
+    flex-shrink: 0;
+  }
+  .status-bar .dot { width: 5px; height: 5px; border-radius: 50%; background: rgba(255,255,255,.5); }
+
+  .toast {
+    position: fixed; bottom: 36px; left: 50%;
+    transform: translateX(-50%) translateY(16px);
+    background: var(--surface2); border: 1px solid var(--accent2);
+    color: var(--accent2); padding: 7px 16px; border-radius: 7px;
+    font-size: 12px; opacity: 0; transition: all .2s; pointer-events: none; z-index: 999;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* Dragging */
+  .rule-item.dragging { opacity: .4; }
+  .rule-item.drag-over { border-color: var(--accent); background: rgba(88,166,255,.06); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">M</div>
+  <h1>Mihomo 配置编辑器</h1>
+  <span>Alpha</span>
+</header>
+
+<div class="main">
+  <div class="left-panel">
+
+    <!-- Tab nav -->
+    <div class="tab-nav">
+      <button class="tab-btn active" onclick="switchTab('providers')">订阅节点</button>
+      <button class="tab-btn" onclick="switchTab('groups')">分流/地区</button>
+      <button class="tab-btn" onclick="switchTab('rules')">规则</button>
+    </div>
+
+    <!-- ===== TAB: Providers ===== -->
+    <div class="tab-pane active" id="tab-providers">
+      <div class="pane-scroll">
+        <div class="upload-area" id="upload-area" onclick="document.getElementById('file-input').click()">
+          <div class="icon">📂</div>
+          <p><strong>点击添加文件</strong></p>
+          <p style="margin-top:3px;font-size:11px;">支持 .yaml / .yml 格式</p>
+        </div>
+        <input type="file" id="file-input" accept=".yaml,.yml">
+
+        <div class="sec-label">订阅节点 (proxy-providers) <span id="provider-count">0</span></div>
+        <div id="providers-container"></div>
+        <button class="add-btn" onclick="addProvider()">＋ 添加订阅</button>
+      </div>
+    </div>
+
+    <!-- ===== TAB: Groups ===== -->
+    <div class="tab-pane" id="tab-groups">
+      <div class="pane-scroll">
+        <div class="sec-label">分流组 (proxy-groups) <span id="group-count">0</span></div>
+        <p class="hint">输入名称按 Enter 添加，如：抖音、ChatGPT</p>
+        <div class="tags-wrap" id="groups-wrap">
+          <input type="text" id="groups-input" placeholder="输入组名…" onkeydown="handleTag(event,'groups')">
+        </div>
+
+        <div class="sec-label" style="margin-top:14px;">地区组 (region groups) <span id="region-count">0</span></div>
+        <p class="hint">输入地区名按 Enter 添加，如：英国、德国</p>
+        <div class="tags-wrap" id="regions-wrap">
+          <input type="text" id="regions-input" placeholder="输入地区名…" onkeydown="handleTag(event,'regions')">
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== TAB: Rules ===== -->
+    <div class="tab-pane" id="tab-rules">
+      <!-- Add rule toolbar -->
+      <div class="rules-toolbar">
+        <select id="rule-type" onchange="onRuleTypeChange()">
+          <optgroup label="域名">
+            <option value="DOMAIN">DOMAIN</option>
+            <option value="DOMAIN-SUFFIX">DOMAIN-SUFFIX</option>
+            <option value="DOMAIN-KEYWORD">DOMAIN-KEYWORD</option>
+            <option value="DOMAIN-WILDCARD">DOMAIN-WILDCARD</option>
+            <option value="DOMAIN-REGEX">DOMAIN-REGEX</option>
+            <option value="GEOSITE">GEOSITE</option>
+          </optgroup>
+          <optgroup label="IP">
+            <option value="IP-CIDR">IP-CIDR</option>
+            <option value="IP-CIDR6">IP-CIDR6</option>
+            <option value="IP-SUFFIX">IP-SUFFIX</option>
+            <option value="IP-ASN">IP-ASN</option>
+            <option value="GEOIP">GEOIP</option>
+          </optgroup>
+          <optgroup label="源 IP">
+            <option value="SRC-GEOIP">SRC-GEOIP</option>
+            <option value="SRC-IP-ASN">SRC-IP-ASN</option>
+            <option value="SRC-IP-CIDR">SRC-IP-CIDR</option>
+            <option value="SRC-IP-SUFFIX">SRC-IP-SUFFIX</option>
+          </optgroup>
+          <optgroup label="端口">
+            <option value="DST-PORT">DST-PORT</option>
+            <option value="SRC-PORT">SRC-PORT</option>
+            <option value="IN-PORT">IN-PORT</option>
+          </optgroup>
+          <optgroup label="入站">
+            <option value="IN-TYPE">IN-TYPE</option>
+            <option value="IN-USER">IN-USER</option>
+            <option value="IN-NAME">IN-NAME</option>
+          </optgroup>
+          <optgroup label="进程">
+            <option value="PROCESS-NAME">PROCESS-NAME</option>
+            <option value="PROCESS-NAME-WILDCARD">PROCESS-NAME-WILDCARD</option>
+            <option value="PROCESS-NAME-REGEX">PROCESS-NAME-REGEX</option>
+            <option value="PROCESS-PATH">PROCESS-PATH</option>
+            <option value="PROCESS-PATH-WILDCARD">PROCESS-PATH-WILDCARD</option>
+            <option value="PROCESS-PATH-REGEX">PROCESS-PATH-REGEX</option>
+            <option value="UID">UID</option>
+          </optgroup>
+          <optgroup label="网络/协议">
+            <option value="NETWORK">NETWORK</option>
+            <option value="DSCP">DSCP</option>
+          </optgroup>
+          <optgroup label="规则集/逻辑">
+            <option value="RULE-SET">RULE-SET</option>
+            <option value="AND">AND</option>
+            <option value="OR">OR</option>
+            <option value="NOT">NOT</option>
+            <option value="SUB-RULE">SUB-RULE</option>
+          </optgroup>
+          <optgroup label="终结">
+            <option value="MATCH">MATCH</option>
+          </optgroup>
+        </select>
+        <input type="text" id="rule-value" placeholder="值 (MATCH无需填写)" style="flex:1.8">
+        <select id="rule-policy" class="policy-sel"></select>
+        <button class="sm-btn" onclick="addRule()">＋ 添加</button>
+      </div>
+
+      <div class="rules-hint" id="rules-hint">
+        匹配域名全名 &nbsp;|&nbsp; 格式: <code style="color:var(--accent4)">DOMAIN,example.com,策略</code>
+        <div class="nr-row">
+          <input type="checkbox" id="no-resolve-chk">
+          <label for="no-resolve-chk">附加 no-resolve（跳过 DNS 解析，适用于 IP 类规则）</label>
+        </div>
+      </div>
+
+      <div class="rule-list" id="rule-list"></div>
+      <div class="rule-count" id="rule-count">共 0 条规则</div>
+    </div>
+
+  </div>
+
+  <!-- ===== RIGHT: Output ===== -->
+  <div class="right-panel">
+    <div class="output-toolbar">
+      <span class="info" id="output-info">就绪 — 编辑左侧参数后点击生成</span>
+      <button class="btn btn-secondary" onclick="resetAll()">↺ 重置</button>
+      <button class="btn btn-primary" onclick="generateYAML()">⚡ 生成</button>
+      <button class="btn btn-success" onclick="copyYAML()">⎘ 复制</button>
+      <button class="btn btn-success" onclick="downloadYAML()">↓ 下载</button>
+    </div>
+    <div class="output-wrap">
+      <div class="empty-hint" id="empty-hint">
+        <span class="big">🌐</span>
+        <span>上传文件或配置参数后点击"生成"</span>
+      </div>
+      <textarea id="yaml-output" spellcheck="false"></textarea>
+    </div>
+    <div class="status-bar">
+      <div class="dot"></div>
+      <span id="status-text">就绪</span>
+      <span id="status-extra" style="margin-left:auto"></span>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+//  STATE
+// ============================================================
+let baseYaml = null;
+let providers = [];
+let providerCounter = 0;
+let groupTags = [];
+let regionTags = [];
+let rules = [];  // [{id, type, value, policy, noResolve}]
+let ruleCounter = 0;
+
+// Available proxy group names (built-in + custom)
+const BUILTIN_GROUPS = ['默认','Google','Telegram','Twitter','哔哩哔哩','巴哈姆特','YouTube','NETFLIX','Spotify','Github','国内','其他','香港','台湾','日本','新加坡','美国','其它地区','全部节点','自动选择','直连'];
+
+// Rule type hints
+const RULE_HINTS = {
+  'DOMAIN':              '匹配完整域名。例: example.com',
+  'DOMAIN-SUFFIX':       '匹配域名后缀（含子域名）。例: google.com',
+  'DOMAIN-KEYWORD':      '匹配域名关键词。例: google',
+  'DOMAIN-WILDCARD':     '通配符匹配域名（* 匹配单级，+ 匹配多级）。例: *.google.com',
+  'DOMAIN-REGEX':        '正则匹配域名。例: ^(.+\\.)?google\\.com$',
+  'GEOSITE':             '匹配 GeoSite 数据库中的站点。例: google / CN / category-ads',
+  'IP-CIDR':             '匹配 IPv4 地址段。例: 192.168.0.0/16',
+  'IP-CIDR6':            '匹配 IPv6 地址段。例: 2001:db8::/32',
+  'IP-SUFFIX':           '匹配 IP 后缀段。例: 8.8.8.8/24',
+  'IP-ASN':              '匹配 IP 所属 ASN。例: 13335（Cloudflare）',
+  'GEOIP':               '匹配 IP 归属国家/地区代码。例: CN / US',
+  'SRC-GEOIP':           '匹配源 IP 的国家/地区代码。例: CN',
+  'SRC-IP-ASN':          '匹配源 IP 的 ASN。例: 13335',
+  'SRC-IP-CIDR':         '匹配源 IP 地址段。例: 192.168.1.0/24',
+  'SRC-IP-SUFFIX':       '匹配源 IP 后缀段。例: 192.168.1.1/24',
+  'DST-PORT':            '匹配目标端口或端口范围。例: 443 / 8000-9000',
+  'SRC-PORT':            '匹配源端口或端口范围。例: 1024-65535',
+  'IN-PORT':             '匹配入站端口（支持范围）。例: 7890',
+  'IN-TYPE':             '匹配入站类型。可选: HTTP / SOCKS4 / SOCKS5 / MIXED / TUN 等',
+  'IN-USER':             '匹配入站认证用户名（多个用 / 分隔）。例: user1/user2',
+  'IN-NAME':             '匹配入站 listener 名称。例: mixed0',
+  'PROCESS-NAME':        '匹配进程名（Android 可匹配包名）。例: chrome.exe',
+  'PROCESS-NAME-WILDCARD':'通配符匹配进程名。例: *chrome*',
+  'PROCESS-NAME-REGEX':  '正则匹配进程名。例: ^chrome',
+  'PROCESS-PATH':        '匹配进程完整路径。例: /usr/bin/curl',
+  'PROCESS-PATH-WILDCARD':'通配符匹配进程路径。例: /usr/bin/*',
+  'PROCESS-PATH-REGEX':  '正则匹配进程路径。例: ^/usr/bin/',
+  'UID':                 '匹配 Linux 用户 ID（仅 Linux）。例: 1000',
+  'NETWORK':             '匹配网络协议。可选: tcp / udp',
+  'DSCP':                '匹配 DSCP 标签（仅 tproxy UDP 入站）。例: 46',
+  'RULE-SET':            '引用外部规则集（需配置 rule-providers）。例: geosite-cn',
+  'AND':                 '逻辑与，所有子规则都匹配才生效。例: ((DOMAIN,a.com),(NETWORK,udp))',
+  'OR':                  '逻辑或，任意子规则匹配即生效。例: ((DOMAIN,a.com),(DOMAIN,b.com))',
+  'NOT':                 '逻辑非，取反匹配。例: ((DOMAIN,a.com))',
+  'SUB-RULE':            '引用 sub-rules 块中的子规则集。例: sub-rule-name',
+  'MATCH':               '匹配所有流量（兜底规则，通常放最后），无需填写值。',
+};
+
+// Types that support no-resolve
+const SUPPORTS_NO_RESOLVE = new Set(['IP-CIDR','IP-CIDR6','IP-SUFFIX','IP-ASN','GEOIP','SRC-GEOIP','SRC-IP-ASN','SRC-IP-CIDR','SRC-IP-SUFFIX']);
+// Types that need no value
+const NO_VALUE_TYPES = new Set(['MATCH']);
+
+// ============================================================
+//  TABS
+// ============================================================
+function switchTab(name) {
+  document.querySelectorAll('.tab-btn').forEach((b,i)=> {
+    const tabs = ['providers','groups','rules'];
+    b.classList.toggle('active', tabs[i] === name);
+  });
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+}
+
+// ============================================================
+//  FILE UPLOAD
+// ============================================================
+document.getElementById('file-input').addEventListener('change', function(e) {
+  const f = e.target.files[0]; if (!f) return;
+  const reader = new FileReader();
+  reader.onload = ev => { loadYaml(ev.target.result, f.name); };
+  reader.readAsText(f);
+  e.target.value = '';
+});
+
+const ua = document.getElementById('upload-area');
+ua.addEventListener('dragover', e => { e.preventDefault(); ua.style.borderColor='var(--accent)'; });
+ua.addEventListener('dragleave', () => { ua.style.borderColor=''; });
+ua.addEventListener('drop', e => {
+  e.preventDefault(); ua.style.borderColor='';
+  const f = e.dataTransfer.files[0]; if (!f) return;
+  const reader = new FileReader();
+  reader.onload = ev => { loadYaml(ev.target.result, f.name); };
+  reader.readAsText(f);
+});
+
+function loadYaml(content, fname) {
+  baseYaml = content;
+  parseProviders(content);
+  parseGroups(content);
+  parseRulesFromYaml(content);
+  showToast('✅ 已加载: ' + fname);
+  generateYAML();
+}
+
+// ============================================================
+//  PARSE EXISTING YAML
+// ============================================================
+function parseProviders(yaml) {
+  providers = []; providerCounter = 0;
+  var lines = yaml.split('\n');
+  var inSection = false, currentName = null, currentBody = [];
+  for (var i = 0; i < lines.length; i++) {
+    var line = lines[i];
+    if (/^proxy-providers:/.test(line)) { inSection = true; continue; }
+    if (inSection) {
+      // Top-level key (non-whitespace at start) ends the section
+      if (/^\S/.test(line) && line.trim() !== '') {
+        if (currentName) flushProvider(currentName, currentBody);
+        inSection = false; currentName = null; currentBody = []; continue;
+      }
+      if (line.trim() === '') {
+        if (currentName) { currentBody.push(line); }
+        continue;
+      }
+      // 2-space indent = new provider key (any name)
+      if (/^  \S/.test(line) && !/^    /.test(line)) {
+        if (currentName) flushProvider(currentName, currentBody);
+        currentName = line.trim().replace(/:.*$/, '');
+        currentBody = [];
+      } else if (currentName) {
+        currentBody.push(line);
+      }
+    }
+  }
+  if (currentName) flushProvider(currentName, currentBody);
+  if (providers.length === 0) addProvider();
+  else renderProviders();
+}
+
+function flushProvider(name, bodyLines) {
+  var body = bodyLines.join('\n');
+  var urlM = body.match(/url:\s*["']?([^"'\n]*)["']?/);
+  var intM = body.match(/interval:\s*(\d+)/);
+  providers.push({ id: ++providerCounter, name: name, url: urlM ? urlM[1].trim() : '', interval: intM ? intM[1] : '86400' });
+}
+
+function parseRulesFromYaml(yaml) {
+  rules = []; ruleCounter = 0;
+  const rulesMatch = yaml.match(/^rules:\s*\n((?:[ \t]+-.*\n?)*)/m);
+  if (!rulesMatch) return;
+  const lines = rulesMatch[1].split('\n');
+  lines.forEach(line => {
+    const clean = line.replace(/^\s*-\s*/, '').trim();
+    if (!clean) return;
+    const parts = clean.split(',');
+    if (parts.length < 2) return;
+    const type = parts[0].trim();
+    const noResolve = parts[parts.length - 1].trim() === 'no-resolve';
+    const adjustedParts = noResolve ? parts.slice(0, -1) : parts;
+    const policy = adjustedParts[adjustedParts.length - 1].trim();
+    const value = adjustedParts.length >= 3 ? adjustedParts.slice(1, -1).join(',').trim() : '';
+    rules.push({ id: ++ruleCounter, type, value, policy, noResolve });
+  });
+  renderRules();
+}
+
+function parseGroups(yaml) {
+  var lines = yaml.split('\n');
+  var inSection = false;
+  var parsedNames = [];
+  var currentName = null, hasFilter = false;
+  for (var i = 0; i < lines.length; i++) {
+    var line = lines[i];
+    if (/^proxy-groups:/.test(line)) { inSection = true; continue; }
+    if (inSection) {
+      if (/^\S/.test(line) && line.trim() !== '') { inSection = false; continue; }
+      if (line.trim() === '') continue;
+      var nameM = line.match(/^\s*- name:\s*(.+)$/);
+      if (nameM) {
+        if (currentName) parsedNames.push({name: currentName, hasFilter: hasFilter});
+        currentName = nameM[1].trim(); hasFilter = false;
+      } else if (currentName && /filter:/.test(line)) {
+        hasFilter = true;
+      }
+    }
+  }
+  if (currentName) parsedNames.push({name: currentName, hasFilter: hasFilter});
+
+  var customGroups = [], customRegions = [];
+  for (var k = 0; k < parsedNames.length; k++) {
+    var item = parsedNames[k];
+    if (BUILTIN_GROUPS.indexOf(item.name) !== -1) continue;  // skip built-in
+    if (item.hasFilter) {
+      if (regionTags.indexOf(item.name) === -1) customRegions.push(item.name);
+    } else {
+      if (groupTags.indexOf(item.name) === -1) customGroups.push(item.name);
+    }
+  }
+  if (customGroups.length > 0) {
+    for (var a = 0; a < customGroups.length; a++) {
+      if (groupTags.indexOf(customGroups[a]) === -1) groupTags.push(customGroups[a]);
+    }
+    renderTags('groups');
+  }
+  if (customRegions.length > 0) {
+    for (var b = 0; b < customRegions.length; b++) {
+      if (regionTags.indexOf(customRegions[b]) === -1) regionTags.push(customRegions[b]);
+    }
+    renderTags('regions');
+  }
+  if (customGroups.length > 0 || customRegions.length > 0) refreshPolicyOptions();
+}
+
+// ============================================================
+//  PROVIDERS
+// ============================================================
+function addProvider() {
+  providerCounter++;
+  providers.push({ id: providerCounter, name: 'provider'+providerCounter, url: '', interval: '86400' });
+  renderProviders();
+}
+
+function removeProvider(id) {
+  providers = providers.filter(p => p.id !== id);
+  renderProviders();
+}
+
+function renderProviders() {
+  const c = document.getElementById('providers-container');
+  c.innerHTML = '';
+  providers.forEach((p, idx) => {
+    const d = document.createElement('div');
+    d.className = 'provider-card';
+    d.innerHTML = `
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="num">${idx+1}</div>
+        <div class="cname" id="cname-${p.id}">${p.name||'provider'+p.id}</div>
+        <button class="del-btn" onclick="event.stopPropagation();removeProvider(${p.id})">✕</button>
+      </div>
+      <div class="card-body" id="cbody-${p.id}">
+        <div class="field"><label>名称</label>
+          <input type="text" value="${p.name}" placeholder="provider${p.id}"
+            oninput="upd(${p.id},'name',this.value);document.getElementById('cname-${p.id}').textContent=this.value||'provider${p.id}'">
+        </div>
+        <div class="field"><label>订阅 URL</label>
+          <input type="text" value="${p.url}" placeholder="https://..."
+            oninput="upd(${p.id},'url',this.value)">
+        </div>
+        <div class="field"><label>自动订阅间隔（秒）</label>
+          <input type="number" value="${p.interval}" placeholder="86400"
+            oninput="upd(${p.id},'interval',this.value)">
+        </div>
+      </div>`;
+    c.appendChild(d);
+  });
+  document.getElementById('provider-count').textContent = providers.length;
+}
+
+function toggleCard(hdr) {
+  const b = hdr.nextElementSibling;
+  b.classList.toggle('collapsed');
+}
+
+function upd(id, key, val) { const p = providers.find(x=>x.id===id); if(p) p[key]=val; }
+
+// ============================================================
+//  TAGS (Groups / Regions)
+// ============================================================
+function handleTag(e, type) {
+  if (e.key !== 'Enter') return;
+  e.preventDefault();
+  const inputId = type==='groups' ? 'groups-input' : 'regions-input';
+  const val = document.getElementById(inputId).value.trim();
+  if (!val) return;
+  if (type === 'groups') { if (!groupTags.includes(val)) { groupTags.push(val); renderTags('groups'); } }
+  else { if (!regionTags.includes(val)) { regionTags.push(val); renderTags('regions'); } }
+  document.getElementById(inputId).value = '';
+  refreshPolicyOptions();
+  updateGroupCounts();
+}
+
+function removeTag(type, val) {
+  if (type==='groups') { groupTags=groupTags.filter(t=>t!==val); renderTags('groups'); }
+  else { regionTags=regionTags.filter(t=>t!==val); renderTags('regions'); }
+  refreshPolicyOptions();
+  updateGroupCounts();
+}
+
+function renderTags(type) {
+  const wrap = document.getElementById(type==='groups'?'groups-wrap':'regions-wrap');
+  const input = document.getElementById(type==='groups'?'groups-input':'regions-input');
+  wrap.querySelectorAll('.tag').forEach(t=>t.remove());
+  const arr = type==='groups' ? groupTags : regionTags;
+  const cls = type==='groups' ? 'tag' : 'tag rtag';
+  arr.forEach(val => {
+    const t = document.createElement('div'); t.className = cls;
+    t.innerHTML = `${val} <button onclick="removeTag('${type}','${val}')">×</button>`;
+    wrap.insertBefore(t, input);
+  });
+}
+
+// ============================================================
+//  RULES
+// ============================================================
+function getAllPolicies() {
+  return [...BUILTIN_GROUPS, ...groupTags, ...regionTags];
+}
+
+function refreshPolicyOptions() {
+  const sel = document.getElementById('rule-policy');
+  const cur = sel.value;
+  sel.innerHTML = '';
+  getAllPolicies().forEach(p => {
+    const o = document.createElement('option'); o.value=p; o.textContent=p; sel.appendChild(o);
+  });
+  sel.value = cur || '默认';
+}
+
+function onRuleTypeChange() {
+  const type = document.getElementById('rule-type').value;
+  const hint = document.getElementById('rules-hint');
+  const nrRow = hint.querySelector('.nr-row');
+  const valInput = document.getElementById('rule-value');
+
+  hint.childNodes[0].textContent = (RULE_HINTS[type] || '') + ' ';
+  nrRow.style.display = SUPPORTS_NO_RESOLVE.has(type) ? 'flex' : 'none';
+  valInput.disabled = NO_VALUE_TYPES.has(type);
+  if (NO_VALUE_TYPES.has(type)) valInput.value = '';
+  valInput.placeholder = NO_VALUE_TYPES.has(type) ? '(无需填写)' : (type==='AND'||type==='OR'||type==='NOT') ? '((DOMAIN,a.com),(NETWORK,tcp))' : '值';
+}
+
+function addRule() {
+  const type = document.getElementById('rule-type').value;
+  const value = document.getElementById('rule-value').value.trim();
+  const policy = document.getElementById('rule-policy').value;
+  const noResolve = document.getElementById('no-resolve-chk').checked;
+
+  if (!NO_VALUE_TYPES.has(type) && !value) { showToast('⚠️ 请填写规则值'); return; }
+
+  rules.push({ id: ++ruleCounter, type, value, policy, noResolve });
+  renderRules();
+  if (!NO_VALUE_TYPES.has(type)) document.getElementById('rule-value').value = '';
+}
+
+function removeRule(id) {
+  rules = rules.filter(r => r.id !== id);
+  renderRules();
+}
+
+
+function renderRules() {
+  const list = document.getElementById('rule-list');
+  list.innerHTML = '';
+  rules.forEach(r => {
+    const item = document.createElement('div');
+    item.className = 'rule-item';
+    item.draggable = true;
+    item.dataset.id = r.id;
+    const noResolveBadge = r.noResolve ? `<span class="rnr">no-resolve</span>` : '';
+    const dispVal = r.value ? `,${r.value}` : '';
+    item.innerHTML = `
+      <span class="drag-handle" title="拖拽排序">⠿</span>
+      <span class="rtype">${r.type}</span>
+      <span class="rval">${dispVal}</span>
+      <span class="rpolicy">${r.policy}</span>
+      ${noResolveBadge}
+      <button class="rdel" onclick="removeRule(${r.id})">✕</button>`;
+    list.appendChild(item);
+  });
+  document.getElementById('rule-count').textContent = `共 ${rules.length} 条规则`;
+  initDragDrop();
+}
+
+// Drag & drop reorder
+let dragSrc = null;
+function initDragDrop() {
+  document.querySelectorAll('.rule-item').forEach(el => {
+    el.addEventListener('dragstart', e => { dragSrc = el; el.classList.add('dragging'); });
+    el.addEventListener('dragend', () => { dragSrc=null; document.querySelectorAll('.rule-item').forEach(i=>i.classList.remove('dragging','drag-over')); });
+    el.addEventListener('dragover', e => { e.preventDefault(); if(el!==dragSrc) el.classList.add('drag-over'); });
+    el.addEventListener('dragleave', () => el.classList.remove('drag-over'));
+    el.addEventListener('drop', e => {
+      e.preventDefault(); el.classList.remove('drag-over');
+      if (!dragSrc || dragSrc === el) return;
+      const srcId = +dragSrc.dataset.id, dstId = +el.dataset.id;
+      const si = rules.findIndex(r=>r.id===srcId), di = rules.findIndex(r=>r.id===dstId);
+      const [moved] = rules.splice(si,1); rules.splice(di,0,moved);
+      renderRules();
+    });
+  });
+}
+
+// ============================================================
+//  YAML GENERATION
+// ============================================================
+function generateYAML() {
+  let yaml = baseYaml ? rebuildYaml(baseYaml) : buildFreshYaml();
+  const out = document.getElementById('yaml-output');
+  out.value = yaml;
+  document.getElementById('empty-hint').style.display = 'none';
+  const lines = yaml.split('\n').length;
+  document.getElementById('status-text').textContent = `已生成 ${lines} 行`;
+  document.getElementById('status-extra').textContent = `providers:${providers.length}  rules:${rules.length}`;
+  document.getElementById('output-info').textContent = `输出 ${lines} 行 · ${yaml.length} 字符`;
+}
+
+function rebuildYaml(orig) {
+  let lines = orig.split('\n');
+  // Replace proxy-providers
+  let ppS = lines.findIndex(l => /^proxy-providers:/.test(l));
+  let ppE = ppS + 1;
+  while (ppE < lines.length && (/^\s/.test(lines[ppE]) || lines[ppE].trim() === '')) ppE++;
+
+  // Replace proxy-groups
+  let pgS = lines.findIndex(l => /^proxy-groups:/.test(l));
+  let pgE = pgS + 1;
+  while (pgE < lines.length && (/^\s/.test(lines[pgE]) || lines[pgE].trim() === '')) pgE++;
+
+  // Replace rules
+  let rS = lines.findIndex(l => /^rules:/.test(l));
+  let rE = rS + 1;
+  while (rE < lines.length && (/^\s/.test(lines[rE]) || lines[rE].trim() === '')) rE++;
+
+  const provBlock = buildProvidersBlock();
+  const pgBlock = buildProxyGroupsBlock();
+  const rulesBlock = buildRulesBlock();
+
+  let out = [...lines];
+  // Replace in reverse order to preserve indices
+  const replacements = [];
+  if (rS !== -1) replacements.push({ s: rS, e: rE, block: rulesBlock });
+  if (pgS !== -1) replacements.push({ s: pgS, e: pgE, block: pgBlock });
+  if (ppS !== -1) replacements.push({ s: ppS, e: ppE, block: provBlock });
+  replacements.sort((a,b) => b.s - a.s);
+  replacements.forEach(({s, e, block}) => { out.splice(s, e-s, ...block); });
+
+  // If sections were missing, append them
+  const result = out.join('\n');
+  let extra = '';
+  if (ppS === -1) extra += '\n' + provBlock.join('\n');
+  if (pgS === -1) extra += '\n\n' + pgBlock.join('\n');
+  if (rS === -1) extra += '\n\n' + rulesBlock.join('\n');
+  return result + extra;
+}
+
+function buildFreshYaml() {
+  const parts = [
+`# Mihomo 配置 — 由编辑器生成
+mixed-port: 7890
+ipv6: true
+allow-lan: true
+unified-delay: false
+tcp-concurrent: true
+external-controller: 127.0.0.1:9090
+external-ui: ui
+external-ui-url: "https://github.com/MetaCubeX/metacubexd/archive/refs/heads/gh-pages.zip"
+
+geodata-mode: true
+geox-url:
+  geoip: "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip-lite.dat"
+  geosite: "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geosite.dat"
+  mmdb: "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/country-lite.mmdb"
+  asn: "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/GeoLite2-ASN.mmdb"
+
+find-process-mode: strict
+global-client-fingerprint: chrome
+
+profile:
+  store-selected: true
+  store-fake-ip: true
+
+sniffer:
+  enable: true
+  sniff:
+    HTTP:
+      ports: [80, 8080-8880]
+      override-destination: true
+    TLS:
+      ports: [443, 8443]
+    QUIC:
+      ports: [443, 8443]
+  skip-domain:
+    - "Mijia Cloud"
+    - "+.push.apple.com"
+
+tun:
+  enable: true
+  stack: mixed
+  dns-hijack:
+    - "any:53"
+    - "tcp://any:53"
+  auto-route: true
+  auto-redirect: true
+  auto-detect-interface: true
+
+dns:
+  enable: true
+  ipv6: true
+  enhanced-mode: fake-ip
+  fake-ip-filter:
+    - "*"
+    - "+.lan"
+    - "+.local"
+    - "+.market.xiaomi.com"
+  default-nameserver:
+    - tls://223.5.5.5
+    - tls://223.6.6.6
+  nameserver:
+    - https://doh.pub/dns-query
+    - https://dns.alidns.com/dns-query
+
+proxies:
+  - name: "直连"
+    type: direct
+    udp: true
+`,
+    buildProvidersBlock().join('\n'),
+    '',
+    buildProxyGroupsBlock().join('\n'),
+    '',
+    buildRulesBlock().join('\n')
+  ];
+  return parts.join('\n');
+}
+
+function buildProvidersBlock() {
+  const lines = ['proxy-providers:'];
+  providers.forEach(p => {
+    const name = p.name || ('provider' + p.id);
+    lines.push(`  ${name}:`);
+    lines.push(`    url: "${p.url || ''}"`);
+    lines.push(`    type: http`);
+    lines.push(`    interval: ${p.interval || 86400}`);
+    lines.push(`    health-check: {enable: true, url: "https://cp.cloudflare.com/generate_204", interval: 300}`);
+    lines.push(`    override:`);
+    lines.push(`      additional-prefix: "[${name}]"`);
+    lines.push('');
+  });
+  return lines;
+}
+
+function buildProxyGroupsBlock() {
+  const lines = ['proxy-groups:', ''];
+  const stdProxies = '[自动选择,直连,香港,台湾,日本,新加坡,美国,其它地区,全部节点]';
+  const allProxies = '[默认,香港,台湾,日本,新加坡,美国,其它地区,全部节点,自动选择,直连]';
+
+  // Built-in traffic groups
+  const trafficGroups = [
+    { name:'默认', proxies: stdProxies },
+    { name:'Google', proxies: allProxies },
+    { name:'Telegram', proxies: allProxies },
+    { name:'Twitter', proxies: allProxies },
+    { name:'哔哩哔哩', proxies: allProxies },
+    { name:'巴哈姆特', proxies: allProxies },
+    { name:'YouTube', proxies: allProxies },
+    { name:'NETFLIX', proxies: allProxies },
+    { name:'Spotify', proxies: allProxies },
+    { name:'Github', proxies: allProxies },
+    { name:'国内', proxies: '[直连,默认,香港,台湾,日本,新加坡,美国,其它地区,全部节点,自动选择]' },
+    { name:'其他', proxies: allProxies },
+  ];
+
+  trafficGroups.forEach(g => {
+    lines.push(`  - name: ${g.name}`);
+    lines.push(`    type: select`);
+    lines.push(`    proxies: ${g.proxies}`);
+    lines.push('');
+  });
+
+  // Custom traffic groups
+  groupTags.forEach(g => {
+    lines.push(`  - name: ${g}`);
+    lines.push(`    type: select`);
+    lines.push(`    proxies: [自动选择,直连,香港,台湾,日本,新加坡,美国,其它地区,全部节点]`);
+    lines.push('');
+  });
+
+  // Separator
+  lines.push('  #分隔,下面是地区分组');
+
+  // Built-in regions
+  const regions = [
+    ['香港', '(?i)港|hk|hongkong|hong kong'],
+    ['台湾', '(?i)台|tw|taiwan'],
+    ['日本', '(?i)日|jp|japan'],
+    ['美国', '(?i)美|us|unitedstates|united states'],
+    ['新加坡', '(?i)(新|sg|singapore)'],
+  ];
+  regions.forEach(([name, filter]) => {
+    lines.push('');
+    lines.push(`  - name: ${name}`);
+    lines.push(`    type: select`);
+    lines.push(`    include-all: true`);
+    lines.push(`    exclude-type: direct`);
+    lines.push(`    filter: "${filter}"`);
+  });
+
+  // Custom regions
+  regionTags.forEach(name => {
+    const filterMap = {
+      '英国':'(?i)英|uk|Britain','德国':'(?i)德|de|germany',
+      '法国':'(?i)法|fr|france','韩国':'(?i)韩|kr|korea',
+      '印度':'(?i)印|in|india','荷兰':'(?i)荷|nl|netherlands',
+      '加拿大':'(?i)加拿大|ca|canada','澳大利亚':'(?i)澳|au|australia',
+      '俄罗斯':'(?i)俄|ru|russia','土耳其':'(?i)土耳其|tr|turkey',
+      '意大利':'(?i)意|it|italy','西班牙':'(?i)西班牙|es|spain',
+      '泰国':'(?i)泰|th|thailand','马来西亚':'(?i)马来|my|malaysia',
+      '越南':'(?i)越|vn|vietnam','菲律宾':'(?i)菲|ph|philippines',
+      '巴西':'(?i)巴西|br|brazil','阿根廷':'(?i)阿根廷|ar|argentina',
+    };
+    const filter = filterMap[name] || `(?i)${name}`;
+    lines.push('');
+    lines.push(`  - name: ${name}`);
+    lines.push(`    type: select`);
+    lines.push(`    include-all: true`);
+    lines.push(`    exclude-type: direct`);
+    lines.push(`    filter: "${filter}"`);
+  });
+
+  // Remaining built-in groups
+  lines.push('');
+  lines.push(`  - name: 其它地区`);
+  lines.push(`    type: select`);
+  lines.push(`    include-all: true`);
+  lines.push(`    exclude-type: direct`);
+  lines.push(`    filter: "(?i)^(?!.*(?:🇭🇰|🇯🇵|🇺🇸|🇸🇬|🇨🇳|港|hk|hongkong|台|tw|taiwan|日|jp|japan|新|sg|singapore|美|us|unitedstates)).*"`);
+  lines.push('');
+  lines.push(`  - name: 全部节点`);
+  lines.push(`    type: select`);
+  lines.push(`    include-all: true`);
+  lines.push(`    exclude-type: direct`);
+  lines.push('');
+  lines.push(`  - name: 自动选择`);
+  lines.push(`    type: url-test`);
+  lines.push(`    include-all: true`);
+  lines.push(`    exclude-type: direct`);
+  lines.push(`    tolerance: 10`);
+
+  return lines;
+}
+
+function buildRulesBlock() {
+  if (rules.length > 0) {
+    const lines = ['rules:'];
+    rules.forEach(r => {
+      let line;
+      if (NO_VALUE_TYPES.has(r.type)) {
+        line = `  - ${r.type},${r.policy}`;
+      } else {
+        line = `  - ${r.type},${r.value},${r.policy}`;
+      }
+      if (r.noResolve && SUPPORTS_NO_RESOLVE.has(r.type)) line += ',no-resolve';
+      lines.push(line);
+    });
+    return lines;
+  }
+  // Default rules
+  return [
+    'rules:',
+    '  - GEOIP,lan,直连,no-resolve',
+    '  - GEOSITE,github,Github',
+    '  - GEOSITE,twitter,Twitter',
+    '  - GEOSITE,youtube,YouTube',
+    '  - GEOSITE,google,Google',
+    '  - GEOSITE,telegram,Telegram',
+    '  - GEOSITE,netflix,NETFLIX',
+    '  - GEOSITE,bilibili,哔哩哔哩',
+    '  - GEOSITE,bahamut,巴哈姆特',
+    '  - GEOSITE,spotify,Spotify',
+    '  - GEOSITE,CN,国内',
+    '  - GEOSITE,geolocation-!cn,其他',
+    '  - GEOIP,google,Google',
+    '  - GEOIP,netflix,NETFLIX',
+    '  - GEOIP,telegram,Telegram',
+    '  - GEOIP,twitter,Twitter',
+    '  - GEOIP,CN,国内',
+    '  - MATCH,其他',
+  ];
+}
+
+// ============================================================
+//  ACTIONS
+// ============================================================
+function copyYAML() {
+  const txt = document.getElementById('yaml-output').value;
+  if (!txt) { showToast('⚠️ 请先生成配置'); return; }
+  navigator.clipboard.writeText(txt).then(() => showToast('✅ 已复制到剪贴板'));
+}
+
+function downloadYAML() {
+  const txt = document.getElementById('yaml-output').value;
+  if (!txt) { showToast('⚠️ 请先生成配置'); return; }
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([txt], {type:'text/yaml'}));
+  a.download = 'config.yaml'; a.click();
+  showToast('✅ 已下载 config.yaml');
+}
+
+function resetAll() {
+  baseYaml=null; providers=[]; providerCounter=0; groupTags=[]; regionTags=[]; rules=[]; ruleCounter=0;
+  document.getElementById('providers-container').innerHTML='';
+  document.getElementById('groups-wrap').querySelectorAll('.tag').forEach(t=>t.remove());
+  document.getElementById('regions-wrap').querySelectorAll('.tag').forEach(t=>t.remove());
+  document.getElementById('rule-list').innerHTML='';
+  document.getElementById('rule-count').textContent='共 0 条规则';
+  document.getElementById('yaml-output').value='';
+  document.getElementById('empty-hint').style.display='';
+  document.getElementById('provider-count').textContent='0';
+  document.getElementById('status-text').textContent='已重置';
+  document.getElementById('status-extra').textContent='';
+  addProvider();
+  showToast('↺ 已重置所有配置');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ============================================================
+//  INIT
+// ============================================================
+function updateGroupCounts() {
+  document.getElementById('group-count').textContent = groupTags.length;
+  document.getElementById('region-count').textContent = regionTags.length;
+}
+refreshPolicyOptions();
+onRuleTypeChange();
+addProvider();
+updateGroupCounts();
+</script>
+</body>
+</html>
